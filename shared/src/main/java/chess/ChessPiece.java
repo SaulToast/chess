@@ -76,9 +76,30 @@ public class ChessPiece {
             case KNIGHT -> getKnightMoves(board, myPosition);
             case BISHOP -> getBishopMoves(board, myPosition);
             case QUEEN -> getQueenMoves(board, myPosition);
-//            case KING -> getKingMoves(board, myPosition);
+            case KING -> getKingMoves(board, myPosition);
             default -> Collections.emptyList();
         };
+    }
+
+    private Collection<ChessMove> getKingMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> moves = new ArrayList<>();
+
+        int [] rowDirections = {1, 1, 1 , 0, -1, -1, -1, 0};
+        int [] colDirections = {1, 0, -1, -1, -1, 0, 1, 1};
+
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+        for (int i = 0; i < rowDirections.length; i++) {
+            int newRow = row + rowDirections[i];
+            int newCol = col + colDirections[i];
+            if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8){
+                continue;
+            }
+            addMovesHelper(board, myPosition, newRow, newCol, moves);
+
+        }
+        return moves;
     }
 
     private Collection<ChessMove> getQueenMoves(ChessBoard board, ChessPosition myPosition) {
@@ -152,13 +173,13 @@ public class ChessPiece {
                     break;
                 }
 
-                openRow = addRookMoves(board, myPosition, row, column, moves);
+                openRow = addMovesHelper(board, myPosition, row, column, moves);
             }
         }
         return moves;
     }
 
-    private boolean addRookMoves(ChessBoard board, ChessPosition myPosition, int row, int column, Collection<ChessMove> moves) {
+    private boolean addMovesHelper(ChessBoard board, ChessPosition myPosition, int row, int column, Collection<ChessMove> moves) {
         var endPosition = new ChessPosition(row, column);
         var occupyingPiece = board.getPiece(endPosition);
         if (occupyingPiece == null) {
