@@ -74,11 +74,28 @@ public class ChessPiece {
             case PAWN -> getPawnMoves(board, myPosition);
             case ROOK -> getRookMoves(board, myPosition);
             case KNIGHT -> getKnightMoves(board, myPosition);
-//            case BISHOP -> getBishopMoves(board, myPosition);
+            case BISHOP -> getBishopMoves(board, myPosition);
+            case QUEEN -> getQueenMoves(board, myPosition);
 //            case KING -> getKingMoves(board, myPosition);
-//            case QUEEN -> getQueenMoves(board, myPosition);
             default -> Collections.emptyList();
         };
+    }
+
+    private Collection<ChessMove> getQueenMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> moves = new ArrayList<>();
+
+        moves.addAll(getRookMoves(board, myPosition));
+        moves.addAll(getBishopMoves(board, myPosition));
+
+        return moves;
+    }
+
+    private Collection<ChessMove> getBishopMoves(ChessBoard board, ChessPosition myPosition) {
+
+        int[] rows = {1, 1, -1, -1};
+        int[] columns = {1, -1, 1, -1};
+
+        return new ArrayList<>(bishopRookHelper(board, myPosition, rows, columns));
     }
 
     private Collection<ChessMove> getKnightMoves(ChessBoard board, ChessPosition myPosition) {
@@ -103,55 +120,41 @@ public class ChessPiece {
                     continue;
                 }
                 moves.add(new ChessMove(myPosition, endPosition));
-
             }
         }
         return moves;
     }
     
     private Collection<ChessMove> getRookMoves(ChessBoard board, ChessPosition myPosition) {
+
+        int[] rows = {0, 0, 1, -1};
+        int[] columns = {1, -1, 0, 0};
+
+        return new ArrayList<>(bishopRookHelper(board, myPosition, rows, columns));
+    }
+
+    private Collection<ChessMove> bishopRookHelper(ChessBoard board, ChessPosition myPosition, int[] rows, int[] columns) {
         Collection<ChessMove> moves = new ArrayList<>();
-        
-        int row = myPosition.getRow();
-        int column = myPosition.getColumn();
 
-        boolean openRow = true;
-        boolean openColumn = true;
+        int initialRow = myPosition.getRow();
+        int initialColumn = myPosition.getColumn();
 
-        // search row to the right
-        for(int i = column+1; i <= 8; i++) {
-            if (!openRow) {
-                break;
+        for (int i = 0; i < rows.length; i++) {
+            int row = initialRow;
+            int column = initialColumn;
+            boolean openRow = true;
+
+            while (openRow) {
+                row += rows[i];
+                column += columns[i];
+
+                if (row < 1 || row > 8 || column < 1 || column > 8) {
+                    break;
+                }
+
+                openRow = addRookMoves(board, myPosition, row, column, moves);
             }
-                openRow = addRookMoves(board, myPosition, row, i, moves);
         }
-
-        // search row to the left
-        openRow = true;
-        for (int i = column-1; i >= 1; i--) {
-            if (!openRow) {
-                break;
-            }
-                openRow = addRookMoves(board, myPosition, row, i, moves);
-        }
-
-        // search column above
-        for(int i = row+1; i <= 8; i++) {
-            if (!openColumn){
-                break;
-            }
-                openColumn = addRookMoves(board, myPosition, i, column, moves);
-        }
-
-        // search column below
-        openColumn = true;
-        for (int i = row-1; i >= 1; i--) {
-            if (!openColumn) {
-                break;
-            }
-                openColumn = addRookMoves(board, myPosition, i, column, moves);
-        }
-
         return moves;
     }
 
