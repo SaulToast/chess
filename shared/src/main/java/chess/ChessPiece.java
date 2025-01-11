@@ -73,12 +73,40 @@ public class ChessPiece {
         return switch (pieceType) {
             case PAWN -> getPawnMoves(board, myPosition);
             case ROOK -> getRookMoves(board, myPosition);
-//            case KNIGHT -> getKnightMoves(board, myPosition);
+            case KNIGHT -> getKnightMoves(board, myPosition);
 //            case BISHOP -> getBishopMoves(board, myPosition);
 //            case KING -> getKingMoves(board, myPosition);
 //            case QUEEN -> getQueenMoves(board, myPosition);
             default -> Collections.emptyList();
         };
+    }
+
+    private Collection<ChessMove> getKnightMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> moves = new ArrayList<>();
+
+        int row = myPosition.getRow();
+        int column = myPosition.getColumn();
+
+        for (int i = -2; i <= 2; i++){
+            for (int j = -2; j <= 2; j++){
+                if (Math.abs(i) == Math.abs(j)) continue;
+                if (i == 0 || j == 0) continue;
+
+                // must be in bounds
+                if (row + i < 1 || row + i > 8 || column + j < 1 || column + j > 8) {
+                    continue;
+                }
+                var endPosition = new ChessPosition(row + i, column + j);
+                // don't add move if the piece is on the same team
+                var occupyingPiece = board.getPiece(endPosition);
+                if (occupyingPiece != null && occupyingPiece.getTeamColor() == teamColor){
+                    continue;
+                }
+                moves.add(new ChessMove(myPosition, endPosition));
+
+            }
+        }
+        return moves;
     }
     
     private Collection<ChessMove> getRookMoves(ChessBoard board, ChessPosition myPosition) {
