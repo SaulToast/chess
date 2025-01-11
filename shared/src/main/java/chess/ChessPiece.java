@@ -72,13 +72,72 @@ public class ChessPiece {
         // pawn moves
         return switch (pieceType) {
             case PAWN -> getPawnMoves(board, myPosition);
-//            case ROOK -> getRookMoves(board, myPosition);
+            case ROOK -> getRookMoves(board, myPosition);
 //            case KNIGHT -> getKnightMoves(board, myPosition);
 //            case BISHOP -> getBishopMoves(board, myPosition);
 //            case KING -> getKingMoves(board, myPosition);
 //            case QUEEN -> getQueenMoves(board, myPosition);
             default -> Collections.emptyList();
         };
+    }
+    
+    private Collection<ChessMove> getRookMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> moves = new ArrayList<>();
+        
+        int row = myPosition.getRow();
+        int column = myPosition.getColumn();
+
+        boolean openRow = true;
+        boolean openColumn = true;
+
+        // search row to the right
+        for(int i = column+1; i <= 8; i++) {
+            if (!openRow) {
+                break;
+            }
+                openRow = addRookMoves(board, myPosition, row, i, moves);
+        }
+
+        // search row to the left
+        openRow = true;
+        for (int i = column-1; i >= 1; i--) {
+            if (!openRow) {
+                break;
+            }
+                openRow = addRookMoves(board, myPosition, row, i, moves);
+        }
+
+        // search column above
+        for(int i = row+1; i <= 8; i++) {
+            if (!openColumn){
+                break;
+            }
+                openColumn = addRookMoves(board, myPosition, i, column, moves);
+        }
+
+        // search column below
+        openColumn = true;
+        for (int i = row-1; i >= 1; i--) {
+            if (!openColumn) {
+                break;
+            }
+                openColumn = addRookMoves(board, myPosition, i, column, moves);
+        }
+
+        return moves;
+    }
+
+    private boolean addRookMoves(ChessBoard board, ChessPosition myPosition, int row, int column, Collection<ChessMove> moves) {
+        var endPosition = new ChessPosition(row, column);
+        var occupyingPiece = board.getPiece(endPosition);
+        if (occupyingPiece == null) {
+            moves.add(new ChessMove(myPosition, endPosition));
+            return true;
+        } else if (occupyingPiece.getTeamColor() != teamColor) {
+            moves.add(new ChessMove(myPosition, endPosition));
+            return false;
+        }
+        return false;
     }
 
     private Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition myPosition) {
