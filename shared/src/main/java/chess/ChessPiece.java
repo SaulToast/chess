@@ -219,7 +219,7 @@ public class ChessPiece {
         return moves;
     }
 
-    // Helper methods
+    // Pawn Helper methods
     private boolean isInitialMove(ChessPosition myPosition) {
         return (teamColor == ChessGame.TeamColor.BLACK && myPosition.getRow() == 7)
                 || (teamColor == ChessGame.TeamColor.WHITE && myPosition.getRow() == 2);
