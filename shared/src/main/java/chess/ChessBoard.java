@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -16,6 +18,10 @@ public class ChessBoard {
     public ChessBoard() {
         board = new ChessPiece[8][8];
         resetBoard();
+    }
+
+    public ChessBoard(ChessBoard oldBoard) {
+        board = Arrays.copyOf(oldBoard.board, oldBoard.board.length);
     }
 
     /**
@@ -37,6 +43,24 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) {
         return board[8-position.getRow()][position.getColumn()-1];
+    }
+
+    public void removePiece(ChessPosition position) {
+        board[8-position.getRow()][position.getColumn()-1] = null;
+    }
+
+    public Collection<ChessMove> getAllMoves(){
+
+        Collection<ChessMove> moves = new ArrayList<>();
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                var pos = new ChessPosition(i, j);
+                var currPiece = getPiece(pos);
+                moves.addAll(currPiece.pieceMoves(this, pos));
+            }
+        }
+
+        return moves;
     }
 
     /**

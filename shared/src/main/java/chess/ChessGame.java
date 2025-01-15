@@ -1,5 +1,7 @@
 package chess;
 
+import jdk.jshell.spi.ExecutionControl;
+
 import java.util.Collection;
 
 /**
@@ -57,15 +59,21 @@ public class ChessGame {
 
         var moves = currPiece.pieceMoves(currentBoard, startPosition);
 
-        for (var move : moves) {
-            simulateMove(move, currentBoard);
-        }
+        var boardCopy = new ChessBoard(currentBoard);
+        moves.removeIf(move -> simulateMoveAndTestCheck(move, boardCopy));
 
         return moves;
     }
 
-    private void simulateMove(ChessMove move, ChessBoard board) {
+    private boolean simulateMoveAndTestCheck(ChessMove move, ChessBoard board) {
+        var currPiece = board.getPiece(move.startPosition);
+        board.addPiece(move.endPosition, currPiece);
+        board.removePiece(move.startPosition);
+        return checkForCheck(board);
+    }
 
+    private boolean checkForCheck(ChessBoard board){
+        throw new RuntimeException("Not implemented yet");
     }
 
     /**
