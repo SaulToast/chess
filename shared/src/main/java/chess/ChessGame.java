@@ -60,6 +60,7 @@ public class ChessGame {
         var moves = currPiece.pieceMoves(currentBoard, startPosition);
 
         var boardCopy = new ChessBoard(currentBoard);
+
         moves.removeIf(move -> simulateMoveAndTestCheck(move, boardCopy));
 
         return moves;
@@ -69,11 +70,19 @@ public class ChessGame {
         var currPiece = board.getPiece(move.startPosition);
         board.addPiece(move.endPosition, currPiece);
         board.removePiece(move.startPosition);
-        return checkForCheck(board);
+        return checkForCheck(board, currPiece);
     }
 
-    private boolean checkForCheck(ChessBoard board){
-        throw new RuntimeException("Not implemented yet");
+    private boolean checkForCheck(ChessBoard board, ChessPiece piece){
+        var king = new ChessPiece(piece.getTeamColor(), ChessPiece.PieceType.KING);
+        var pos = board.getPosition(king);
+        var moves = board.getAllMoves();
+        for (var move : moves) {
+            if (move.getEndPosition().equals(pos)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

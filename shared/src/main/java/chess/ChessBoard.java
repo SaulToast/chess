@@ -17,7 +17,7 @@ public class ChessBoard {
 
     public ChessBoard() {
         board = new ChessPiece[8][8];
-        resetBoard();
+
     }
 
     public ChessBoard(ChessBoard oldBoard) {
@@ -49,6 +49,18 @@ public class ChessBoard {
         board[8-position.getRow()][position.getColumn()-1] = null;
     }
 
+    public ChessPosition getPosition(ChessPiece piece) {
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                var pos = new ChessPosition(i, j);
+                if (piece.equals(getPiece(pos))) {
+                    return pos;
+                }
+            }
+        }
+        return null;
+    }
+
     public Collection<ChessMove> getAllMoves(){
 
         Collection<ChessMove> moves = new ArrayList<>();
@@ -56,6 +68,7 @@ public class ChessBoard {
             for (int j = 1; j < 9; j++) {
                 var pos = new ChessPosition(i, j);
                 var currPiece = getPiece(pos);
+                if (currPiece == null) { continue; }
                 moves.addAll(currPiece.pieceMoves(this, pos));
             }
         }
