@@ -2,6 +2,7 @@ package chess;
 
 import jdk.jshell.spi.ExecutionControl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -56,7 +57,7 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece currPiece = currentBoard.getPiece(startPosition);
         if (currPiece == null) { return null; }
-
+        if (isInCheck(currPiece.getTeamColor()) && currPiece.getPieceType() != ChessPiece.PieceType.KING) { return new ArrayList<>(); }
         var moves = currPiece.pieceMoves(currentBoard, startPosition);
 
         var boardCopy = new ChessBoard(currentBoard);
@@ -70,19 +71,11 @@ public class ChessGame {
         var currPiece = board.getPiece(move.startPosition);
         board.addPiece(move.endPosition, currPiece);
         board.removePiece(move.startPosition);
-        return checkForCheck(board, currPiece);
+        return checkForCheck(board);
     }
 
-    private boolean checkForCheck(ChessBoard board, ChessPiece piece){
-        var king = new ChessPiece(piece.getTeamColor(), ChessPiece.PieceType.KING);
-        var pos = board.getPosition(king);
-        var moves = board.getAllMoves();
-        for (var move : moves) {
-            if (move.getEndPosition().equals(pos)) {
-                return true;
-            }
-        }
-        return false;
+    private boolean checkForCheck(ChessBoard board){
+        throw new RuntimeException("Not implemented yet");
     }
 
     /**
@@ -104,7 +97,17 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        return gameState.getTeamColor() == teamColor;
+        var moves = teamColor == TeamColor.BLACK? currentBoard.getWhiteMoves() : currentBoard.getBlackMoves();
+        for (var move : moves) {
+            var currPiece = currentBoard.getPiece(move.endPosition);
+
+            if (currPiece == null) { continue; }
+
+            if (currPiece.equals(currentBoard.getKing(teamColor))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

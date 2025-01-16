@@ -14,6 +14,8 @@ import java.util.Objects;
 public class ChessBoard {
 
     private ChessPiece[][] board;
+    private ChessPiece whiteKing = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+    private ChessPiece blackKing = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
 
     public ChessBoard() {
         board = new ChessPiece[8][8];
@@ -21,7 +23,11 @@ public class ChessBoard {
     }
 
     public ChessBoard(ChessBoard oldBoard) {
-        board = Arrays.copyOf(oldBoard.board, oldBoard.board.length);
+        board = new ChessPiece[8][];
+
+        for (int i = 0; i < 8; i++) {
+            board[i] = Arrays.copyOf(oldBoard.board[i], oldBoard.board[i].length);
+        }
     }
 
     /**
@@ -49,19 +55,12 @@ public class ChessBoard {
         board[8-position.getRow()][position.getColumn()-1] = null;
     }
 
-    public ChessPosition getPosition(ChessPiece piece) {
-        for (int i = 1; i < 9; i++) {
-            for (int j = 1; j < 9; j++) {
-                var pos = new ChessPosition(i, j);
-                if (piece.equals(getPiece(pos))) {
-                    return pos;
-                }
-            }
-        }
-        return null;
+    public ChessPiece getKing(ChessGame.TeamColor teamColor) {
+        return teamColor == ChessGame.TeamColor.BLACK ? blackKing : whiteKing;
     }
 
-    public Collection<ChessMove> getAllMoves(){
+
+    private Collection<ChessMove> getAllMoves(boolean white, boolean black){
 
         Collection<ChessMove> moves = new ArrayList<>();
         for (int i = 1; i < 9; i++) {
@@ -69,11 +68,25 @@ public class ChessBoard {
                 var pos = new ChessPosition(i, j);
                 var currPiece = getPiece(pos);
                 if (currPiece == null) { continue; }
+                if (white && !currPiece.getTeamColor().equals(ChessGame.TeamColor.WHITE)) { continue; }
+                if (black && !currPiece.getTeamColor().equals(ChessGame.TeamColor.BLACK)) { continue; }
                 moves.addAll(currPiece.pieceMoves(this, pos));
             }
         }
 
         return moves;
+    }
+
+    public Collection<ChessMove> getAllMoves() {
+        return getAllMoves(true, true);
+    }
+
+    public Collection<ChessMove> getWhiteMoves(){
+        return getAllMoves(true, false);
+    }
+
+    public Collection<ChessMove> getBlackMoves(){
+        return getAllMoves(false, true);
     }
 
     /**
@@ -107,9 +120,9 @@ public class ChessBoard {
         addPiece(new ChessPosition(1, 4), whiteQueen);
 
         // kings
-        var blackKing = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+        blackKing = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
         addPiece(new ChessPosition(8, 5), blackKing);
-        var whiteKing = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+        whiteKing = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
         addPiece(new ChessPosition(1, 5), whiteKing);
 
 
