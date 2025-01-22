@@ -20,6 +20,7 @@ public class ChessGame {
         gameState = new ChessGameState();
         gameState.setTeamColor(TeamColor.WHITE);
         currentBoard = new ChessBoard();
+        currentBoard.resetBoard();
 
     }
 
@@ -57,25 +58,39 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece currPiece = currentBoard.getPiece(startPosition);
         if (currPiece == null) { return null; }
-        if (isInCheck(currPiece.getTeamColor()) && currPiece.getPieceType() != ChessPiece.PieceType.KING) { return new ArrayList<>(); }
+
+        // get initial moves
         var moves = currPiece.pieceMoves(currentBoard, startPosition);
 
+        // copy the board and simulate moves prevents moving into check
         var boardCopy = new ChessBoard(currentBoard);
+        moves.removeIf(move -> simulateMoveAndTestCheck(move, currPiece, boardCopy));
 
-        moves.removeIf(move -> simulateMoveAndTestCheck(move, boardCopy));
+
 
         return moves;
     }
 
-    private boolean simulateMoveAndTestCheck(ChessMove move, ChessBoard board) {
-        var currPiece = board.getPiece(move.startPosition);
-        board.addPiece(move.endPosition, currPiece);
+    private boolean simulateMoveAndTestCheck(ChessMove move, ChessPiece piece, ChessBoard board) {
+        board.addPiece(move.endPosition, piece);
         board.removePiece(move.startPosition);
-        return checkForCheck(board);
+        return checkForCheck(piece.getTeamColor(), board);
     }
 
-    private boolean checkForCheck(ChessBoard board){
-        throw new RuntimeException("Not implemented yet");
+    private boolean checkForCheck(TeamColor teamColor, ChessBoard board){
+        // true if found check, false otherwise
+        var moves = teamColor == TeamColor.BLACK? board.getWhiteMoves() : board.getBlackMoves();
+        boolean foundCheck = false;
+        for (var move : moves) {
+            var currPiece = currentBoard.getPiece(move.endPosition);
+
+            if (currPiece == null) { continue; }
+
+            if (currPiece.equals(currentBoard.getKing(teamColor))) {
+                foundCheck = true;
+            }
+        }
+        return foundCheck;
     }
 
     /**
@@ -97,17 +112,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        var moves = teamColor == TeamColor.BLACK? currentBoard.getWhiteMoves() : currentBoard.getBlackMoves();
-        for (var move : moves) {
-            var currPiece = currentBoard.getPiece(move.endPosition);
-
-            if (currPiece == null) { continue; }
-
-            if (currPiece.equals(currentBoard.getKing(teamColor))) {
-                return true;
-            }
-        }
-        return false;
+        return checkForCheck(teamColor, currentBoard);
     }
 
     /**
@@ -118,6 +123,9 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         return gameState.isCheckmate();
+
+        // Checkmate is when you are in check and the king has no valid moves
+        // can't protect king with any other piece
     }
 
     /**
@@ -137,7 +145,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        currentBoard = board;
+        currentBoard = new ChessBoard(board);
     }
 
     /**
