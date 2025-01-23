@@ -28,6 +28,10 @@ public class ChessBoard {
         for (int i = 0; i < 8; i++) {
             board[i] = Arrays.copyOf(oldBoard.board[i], oldBoard.board[i].length);
         }
+
+        whiteKing = oldBoard.whiteKing;
+        blackKing = oldBoard.blackKing;
+
     }
 
     /**

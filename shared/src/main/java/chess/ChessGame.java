@@ -1,8 +1,4 @@
 package chess;
-
-import jdk.jshell.spi.ExecutionControl;
-
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
