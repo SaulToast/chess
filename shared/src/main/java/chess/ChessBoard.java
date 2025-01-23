@@ -182,4 +182,33 @@ public class ChessBoard {
     public int hashCode() {
         return Arrays.deepHashCode(board);
     }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < board.length; i++) {
+            ChessPiece[] row = board[i];
+            if (row == null || row.length == 0) {
+                sb.append("| | | | | | | | |");
+            } else {
+                for (int j = 0; j < row.length; j++) {
+                    if (row[j] != null) {
+                        sb.append(row[j].toString());
+                    } else {sb.append(" ");}
+
+                    if (j < row.length - 1) {
+                        sb.append("|");
+                    }
+                }
+            }
+            if (i < board.length - 1) {
+                sb.append("\n");
+            }
+
+        }
+        return sb.toString();
+    }
 }
+
+
