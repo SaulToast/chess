@@ -58,15 +58,16 @@ public class ChessGame {
         var moves = currPiece.pieceMoves(currentBoard, startPosition);
 
         // copy the board and simulate moves prevents moving into check
-        moves.removeIf(move -> simulateMoveAndTestCheck(move, currPiece));
+        moves.removeIf(this::simulateMoveAndTestCheck);
 
         return moves;
     }
 
-    private boolean simulateMoveAndTestCheck(ChessMove move, ChessPiece piece) {
+    private boolean simulateMoveAndTestCheck(ChessMove move) {
         var boardCopy = new ChessBoard(currentBoard);
-        boardCopy.addPiece(move.endPosition, piece);
-        boardCopy.removePiece(move.startPosition);
+        var piece = boardCopy.getPiece(move.getStartPosition());
+        boardCopy.addPiece(move.getEndPosition(), piece);
+        boardCopy.removePiece(move.getStartPosition());
         return checkForCheck(piece.getTeamColor(), boardCopy);
     }
 
@@ -131,11 +132,17 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-
-        throw new RuntimeException("Not implemented");
-
         // Checkmate is when you are in check and the king has no valid moves
         // can't protect king with any other piece
+        var inCheck = isInCheck(teamColor);
+        var king = currentBoard.getKing(teamColor);
+        var kingPos = king.getMyPosition();
+        var kingMoves = validMoves(kingPos);
+        var allMoves = currentBoard.getAllMoves();
+        for (var move : allMoves) {
+            if (!simulateMoveAndTestCheck(move)) { return false; }
+        }
+        return inCheck && kingMoves.isEmpty();
     }
 
     /**
@@ -156,7 +163,15 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        currentBoard = new ChessBoard(board);
+        currentBoard = new ChessBoard();
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                var pos = new ChessPosition(i, j);
+                var piece = board.getPiece(pos);
+                if (piece == null) { continue; }
+                currentBoard.addPiece(pos, piece);
+            }
+        }
     }
 
     /**

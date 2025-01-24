@@ -42,6 +42,9 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
         board[8-position.getRow()][position.getColumn()-1] = piece;
+        piece.setMyPosition(position);
+        if (piece.equals(whiteKing)) {whiteKing = piece;}
+        if (piece.equals(blackKing)) {blackKing = piece;}
     }
 
     /**
@@ -72,8 +75,14 @@ public class ChessBoard {
                 var pos = new ChessPosition(i, j);
                 var currPiece = getPiece(pos);
                 if (currPiece == null) { continue; }
-                if (white && !currPiece.getTeamColor().equals(ChessGame.TeamColor.WHITE)) { continue; }
-                if (black && !currPiece.getTeamColor().equals(ChessGame.TeamColor.BLACK)) { continue; }
+                if (!white || !black) {
+                    if (white && !currPiece.getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
+                        continue;
+                    }
+                    if (black && !currPiece.getTeamColor().equals(ChessGame.TeamColor.BLACK)) {
+                        continue;
+                    }
+                }
                 moves.addAll(currPiece.pieceMoves(this, pos));
             }
         }
@@ -189,18 +198,16 @@ public class ChessBoard {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < board.length; i++) {
             ChessPiece[] row = board[i];
-            if (row == null || row.length == 0) {
-                sb.append("| | | | | | | | |");
-            } else {
-                for (int j = 0; j < row.length; j++) {
-                    if (row[j] != null) {
-                        sb.append(row[j].toString());
-                    } else {sb.append(" ");}
-
-                    if (j < row.length - 1) {
-                        sb.append("|");
-                    }
+            sb.append("|");
+            for (ChessPiece chessPiece : row) {
+                if (chessPiece != null) {
+                    sb.append(chessPiece.toString());
+                } else {
+                    sb.append(" ");
                 }
+
+                sb.append("|");
+
             }
             if (i < board.length - 1) {
                 sb.append("\n");

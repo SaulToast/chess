@@ -13,6 +13,16 @@ public class ChessPiece {
 
     private final ChessGame.TeamColor teamColor;
     private final PieceType pieceType;
+
+    public ChessPosition getMyPosition() {
+        return myPosition;
+    }
+
+    public void setMyPosition(ChessPosition myPosition) {
+        this.myPosition = myPosition;
+    }
+
+    private ChessPosition myPosition;
     private static final Map<PieceType, Class<? extends PieceMoveCalculator>> calculators = new HashMap<>();
 
     static {
