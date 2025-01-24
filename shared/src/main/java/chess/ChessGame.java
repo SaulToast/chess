@@ -63,6 +63,15 @@ public class ChessGame {
         return moves;
     }
 
+    public Collection<ChessMove> allValidMoves(TeamColor teamColor) {
+        Collection<ChessMove> moves = switch (teamColor) {
+            case WHITE -> currentBoard.getWhiteMoves();
+            case BLACK -> currentBoard.getBlackMoves();
+        };
+        moves.removeIf(this::simulateMoveAndTestCheck);
+        return moves;
+    }
+
     private boolean simulateMoveAndTestCheck(ChessMove move) {
         var boardCopy = new ChessBoard(currentBoard);
         var piece = boardCopy.getPiece(move.getStartPosition());
@@ -138,7 +147,7 @@ public class ChessGame {
         var king = currentBoard.getKing(teamColor);
         var kingPos = king.getMyPosition();
         var kingMoves = validMoves(kingPos);
-        var allMoves = currentBoard.getAllMoves();
+        var allMoves = allValidMoves(teamColor);
         for (var move : allMoves) {
             if (!simulateMoveAndTestCheck(move)) { return false; }
         }
@@ -154,7 +163,9 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
 
-        throw new RuntimeException("Not implemented");
+        var inCheck = isInCheck(teamColor);
+        var allMoves = allValidMoves(teamColor);
+        return !inCheck && allMoves.isEmpty();
     }
 
     /**
