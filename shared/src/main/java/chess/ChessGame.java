@@ -13,6 +13,7 @@ public class ChessGame {
     private ChessBoard currentBoard;
     private ChessPosition enPassantTarget;
     private ChessPiece enPassantWouldCapture;
+    private int enPassantResetCounter = 0;
 
     public ChessGame() {
         currentTeamColor = TeamColor.WHITE;
@@ -79,7 +80,7 @@ public class ChessGame {
         if (piece.getPieceType() != ChessPiece.PieceType.PAWN) { return;}
         if (enPassantTarget == null) { return; }
         var currPosition = piece.getMyPosition();
-        if (enPassantTarget.getRow() != currPosition.getRow()) { return; }
+        if (enPassantWouldCapture.getMyPosition().getRow() != currPosition.getRow()) { return; }
         moves.add(new ChessMove(currPosition, enPassantTarget));
     }
 
@@ -114,7 +115,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        enPassantTarget = null;
+        enPassantResetCounter++;
         var currPiece = currentBoard.getPiece(move.getStartPosition());
         if (currPiece == null) { throw new InvalidMoveException(); }
         if (!validMoves(move.getStartPosition()).contains(move)) { throw new InvalidMoveException(); }
@@ -140,6 +141,11 @@ public class ChessGame {
             setTeamTurn(TeamColor.BLACK);
         } else {
             setTeamTurn(TeamColor.WHITE);
+        }
+        if (enPassantResetCounter > 1){
+            enPassantResetCounter = 0;
+            enPassantTarget = null;
+            enPassantWouldCapture = null;
         }
 
     }
