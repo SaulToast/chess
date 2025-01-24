@@ -23,15 +23,18 @@ public class ChessBoard {
     }
 
     public ChessBoard(ChessBoard oldBoard) {
-        board = new ChessPiece[8][];
+        board = new ChessPiece[8][8];
 
         for (int i = 0; i < 8; i++) {
-            board[i] = Arrays.copyOf(oldBoard.board[i], oldBoard.board[i].length);
+            for (int j = 0; j < 8; j++) {
+                if (oldBoard.board[i][j] != null) {
+                    board[i][j] = new ChessPiece(oldBoard.board[i][j]);
+                }
+            }
         }
 
         whiteKing = oldBoard.whiteKing;
         blackKing = oldBoard.blackKing;
-
     }
 
     /**

@@ -40,6 +40,13 @@ public class ChessPiece {
         pieceType = type;
     }
 
+    public ChessPiece(ChessPiece piece) {
+        teamColor = piece.teamColor;
+        pieceType = piece.pieceType;
+        var position = piece.getMyPosition();
+        myPosition = new ChessPosition(position);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
