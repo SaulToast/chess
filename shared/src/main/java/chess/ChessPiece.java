@@ -13,6 +13,7 @@ public class ChessPiece {
 
     private final ChessGame.TeamColor teamColor;
     private final PieceType pieceType;
+    private boolean pieceMoved;
 
     public ChessPosition getMyPosition() {
         return myPosition;
@@ -45,6 +46,7 @@ public class ChessPiece {
         pieceType = piece.pieceType;
         var position = piece.getMyPosition();
         myPosition = new ChessPosition(position);
+        pieceMoved = piece.pieceMoved;
     }
 
     @Override

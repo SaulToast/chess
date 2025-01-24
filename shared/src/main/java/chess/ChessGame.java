@@ -8,18 +8,20 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-
+    // game data
     private TeamColor currentTeamColor;
     private ChessBoard currentBoard;
+    // data for en passant
     private ChessPosition enPassantTarget;
     private ChessPiece enPassantWouldCapture;
     private int enPassantResetCounter = 0;
+    // data for castling
+
 
     public ChessGame() {
         currentTeamColor = TeamColor.WHITE;
         currentBoard = new ChessBoard();
         currentBoard.resetBoard();
-
     }
 
     /**
