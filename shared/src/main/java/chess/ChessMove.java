@@ -10,9 +10,18 @@ import java.util.Objects;
  */
 public class ChessMove {
 
-    ChessPosition startPosition;
-    ChessPosition endPosition;
-    ChessPiece.PieceType promotionPiece = null;
+    private final ChessPosition startPosition;
+    private final ChessPosition endPosition;
+    private ChessPiece.PieceType promotionPiece = null;
+    private boolean isCastle = false;
+
+    public void updateCastle(){
+        isCastle = true;
+    }
+
+    public boolean isCastle(){
+        return isCastle;
+    }
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {

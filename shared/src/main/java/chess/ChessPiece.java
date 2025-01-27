@@ -15,6 +15,9 @@ public class ChessPiece {
     private final PieceType pieceType;
     private boolean pieceMoved;
 
+    public boolean isPieceMoved() { return pieceMoved; }
+    public void updatePieceMoved() { this.pieceMoved = true; }
+
     public ChessPosition getMyPosition() {
         return myPosition;
     }
