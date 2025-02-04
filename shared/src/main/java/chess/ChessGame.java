@@ -100,7 +100,10 @@ public class ChessGame {
         addCastlingHelper(moves, kingPosition, rookPositionQueenside, kingDestinationQueenside);
     }
 
-    private void addCastlingHelper(Collection<ChessMove> moves, ChessPosition kingPosition, ChessPosition rookPosition, ChessPosition destinationPosition) {
+    private void addCastlingHelper(Collection<ChessMove> moves,
+                                   ChessPosition kingPosition,
+                                   ChessPosition rookPosition,
+                                   ChessPosition destinationPosition) {
         var rook = currentBoard.getPiece(rookPosition);
         if (rook == null || rook.isPieceMoved()) { return; }
         if (checkCastlePathDanger(kingPosition, rookPosition)) { return; }
@@ -177,7 +180,9 @@ public class ChessGame {
         if (currPiece.getPieceType() == ChessPiece.PieceType.KING) {
             var start = move.getStartPosition();
             var end = move.getEndPosition();
-            if (start.getColumn() - end.getColumn() != 1 && start.getColumn() - end.getColumn() != -1 && start.getColumn() != end.getColumn()) {
+            if (start.getColumn() - end.getColumn() != 1
+                    && start.getColumn() - end.getColumn() != -1
+                    && start.getColumn() != end.getColumn()) {
                 makeMove(getRookMove(move));
             }
         }

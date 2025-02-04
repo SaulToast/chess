@@ -62,7 +62,12 @@ public class PawnMovesCalculator extends PieceMoveCalculator{
         }
     }
 
-    private void addDiagonalCapture(Collection<ChessMove> moves, ChessBoard board, ChessPosition start, int endRow, int endColumn, boolean promotion) {
+    private void addDiagonalCapture(Collection<ChessMove> moves,
+                                    ChessBoard board,
+                                    ChessPosition start,
+                                    int endRow,
+                                    int endColumn,
+                                    boolean promotion) {
         if (endColumn >= 1 && endColumn <= 8) {
             var endPosition = new ChessPosition(endRow, endColumn);
             var occupyingPiece = board.getPiece(endPosition);

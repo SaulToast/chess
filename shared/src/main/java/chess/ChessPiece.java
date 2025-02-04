@@ -27,15 +27,15 @@ public class ChessPiece {
     }
 
     private ChessPosition myPosition;
-    private static final Map<PieceType, Class<? extends PieceMoveCalculator>> calculators = new HashMap<>();
+    private static final Map<PieceType, Class<? extends PieceMoveCalculator>> CALCULATORS = new HashMap<>();
 
     static {
-        calculators.put(PieceType.PAWN, PawnMovesCalculator.class);
-        calculators.put(PieceType.KNIGHT, KnightMovesCalculator.class);
-        calculators.put(PieceType.ROOK, RookMovesCalculator.class);
-        calculators.put(PieceType.BISHOP, BishopMovesCalculator.class);
-        calculators.put(PieceType.KING, KingMovesCalculator.class);
-        calculators.put(PieceType.QUEEN, QueenMovesCalculator.class);
+        CALCULATORS.put(PieceType.PAWN, PawnMovesCalculator.class);
+        CALCULATORS.put(PieceType.KNIGHT, KnightMovesCalculator.class);
+        CALCULATORS.put(PieceType.ROOK, RookMovesCalculator.class);
+        CALCULATORS.put(PieceType.BISHOP, BishopMovesCalculator.class);
+        CALCULATORS.put(PieceType.KING, KingMovesCalculator.class);
+        CALCULATORS.put(PieceType.QUEEN, QueenMovesCalculator.class);
     }
 
 
@@ -118,7 +118,7 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition){
         // pawn moves
         try {
-            var calculatorClass = calculators.get(pieceType);
+            var calculatorClass = CALCULATORS.get(pieceType);
             var calcConstructor = calculatorClass.getDeclaredConstructor(ChessGame.TeamColor.class);
             var moveCalc = calcConstructor.newInstance(teamColor);
             return moveCalc.pieceMoves(board, myPosition);

@@ -24,8 +24,8 @@ public class KnightMovesCalculator extends PieceMoveCalculator{
 
         for (int i = -2; i <= 2; i++){
             for (int j = -2; j <= 2; j++){
-                if (Math.abs(i) == Math.abs(j)) continue;
-                if (i == 0 || j == 0) continue;
+                if (Math.abs(i) == Math.abs(j)) { continue; }
+                if (i == 0 || j == 0) { continue; }
 
                 // must be in bounds
                 if (row + i < 1 || row + i > 8 || column + j < 1 || column + j > 8) {
