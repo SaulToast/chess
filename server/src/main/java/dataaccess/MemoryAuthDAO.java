@@ -11,16 +11,16 @@ public class MemoryAuthDAO implements AuthDAO{
     private Map<String, AuthData> authTokens;
 
     public MemoryAuthDAO() {
-        authTokens = new HashMap<String, AuthData>();
+        authTokens = new HashMap<>();
     }
 
     @Override
-    public void createAuth(String username) throws DataAccessException {
+    public AuthData createAuth(String username) throws DataAccessException {
         if (!authTokens.containsKey(username)){
             var id = UUID.randomUUID().toString();
             var data = new AuthData(id, username);
             authTokens.put(username, data);
-            return;
+            return data;
         }
         throw new DataAccessException("Username already has an authToken");
     }
@@ -41,6 +41,11 @@ public class MemoryAuthDAO implements AuthDAO{
             return;
         }
         throw new DataAccessException("Username doesn't have an associated authToken");
+    }
+
+    @Override
+    public void clear(){
+        authTokens = new HashMap<>();
     }
 
 }

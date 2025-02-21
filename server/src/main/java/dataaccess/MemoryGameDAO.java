@@ -43,4 +43,9 @@ public class MemoryGameDAO implements GameDAO{
         games.put(gameID, g);
     }
 
+    @Override
+    public void clear(){
+        games = new HashMap<>();
+    }
+
 }
