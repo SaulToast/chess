@@ -20,7 +20,7 @@ public class MemoryUserDAO implements UserDAO{
         if (data != null) {
             return data;
         }
-        throw new DataAccessException("The requested user doesn't exist");
+        throw new DataAccessException("Error: The requested user doesn't exist");
     }
 
     @Override
@@ -28,7 +28,7 @@ public class MemoryUserDAO implements UserDAO{
         if (!users.containsKey(data.username())) {
             users.put(data.username(), data);
         } else {
-            throw new DataAccessException("Username already exists");
+            throw new DataAccessException("Error: Username already exists");
         }
     }
 

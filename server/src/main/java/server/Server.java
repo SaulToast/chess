@@ -22,6 +22,8 @@ public class Server {
     private final UserService userService;
     private final AuthService authService;
 
+    private final Gson gson = new Gson();
+
     public Server() {
 
         userDAO = new MemoryUserDAO();
@@ -68,19 +70,34 @@ public class Server {
 
     private Object register(Request req, Response res) throws ResponseException {
         UserData data = new Gson().fromJson(req.body(), UserData.class);
+        if (data == null || data.username() == null || data.password() == null || data.email() == null){
+            throw new ResponseException(400, "Error: bad request");
+        }
         AuthData authData = userService.createUser(data);
         return new Gson().toJson(authData);
     }
 
     private Object login(Request req, Response res) throws ResponseException {
-        // TODO
-        throw new UnsupportedOperationException();
+        UserData data = new Gson().fromJson(req.body(), UserData.class);
+        if (data == null || data.username() == null || data.password() == null){
+            throw new ResponseException(400, "Error: bad request");
+        }
+        var authData = userService.loginUser(data);
+        return new Gson().toJson(authData);
 
     }
 
     private Object logout(Request req, Response res) throws ResponseException {
-        // TODO
-        throw new UnsupportedOperationException();
+        String authToken = req.headers("authorization");
+
+        if (authToken == null){
+            throw new ResponseException(400, "Error: bad request");
+        }
+
+        userService.logoutUser(authToken);
+        res.status(200);
+        return "";
+        
     }
 
     private Object listGames(Request req, Response res) throws ResponseException {

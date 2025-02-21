@@ -8,39 +8,39 @@ import model.AuthData;
 
 public class MemoryAuthDAO implements AuthDAO{
 
-    private Map<String, AuthData> authTokens;
+    private Map<String, String> authTokens;
+    private Map<String, String> usernameToAuth;
 
     public MemoryAuthDAO() {
         authTokens = new HashMap<>();
+        usernameToAuth = new HashMap<>();
     }
 
     @Override
     public AuthData createAuth(String username) throws DataAccessException {
-        if (!authTokens.containsKey(username)){
-            var id = UUID.randomUUID().toString();
-            var data = new AuthData(id, username);
-            authTokens.put(username, data);
-            return data;
+        if (usernameToAuth.containsKey(username)){
+            throw new DataAccessException("Error: Username already has an authToken");
         }
-        throw new DataAccessException("Username already has an authToken");
+
+        var id = UUID.randomUUID().toString();
+        var data = new AuthData(id, username);
+
+        authTokens.put(id, username);
+        usernameToAuth.put(username, id);
+
+        return data;
+        
+        
     }
 
     @Override
-    public AuthData getAuth(String username) throws DataAccessException {
-        AuthData token = authTokens.get(username);
-        if (token != null) {
-            return token;
-        }
-        throw new DataAccessException("Username doesn't have an associated authToken");
-    }
-
-    @Override
-    public void deleteAuth(String username) throws DataAccessException {
-        if (authTokens.containsKey(username)){
-            authTokens.remove(username);
+    public void deleteAuth(String authToken) throws DataAccessException {
+        if (authTokens.containsKey(authToken)){
+            var username = authTokens.remove(authToken);
+            usernameToAuth.remove(username);
             return;
         }
-        throw new DataAccessException("Username doesn't have an associated authToken");
+        throw new DataAccessException("Error: Username doesn't have an associated authToken");
     }
 
     @Override

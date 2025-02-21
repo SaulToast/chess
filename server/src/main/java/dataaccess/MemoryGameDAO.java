@@ -21,7 +21,7 @@ public class MemoryGameDAO implements GameDAO{
         if (data != null){
             return data;
         }
-        throw new DataAccessException("Requested gameID doesn't exist");
+        throw new DataAccessException("Error: Requested gameID doesn't exist");
     }
 
     @Override
@@ -30,7 +30,7 @@ public class MemoryGameDAO implements GameDAO{
             games.put(g.GameID(), g);
             return;
         }
-        throw new DataAccessException("A game with the id already exists");
+        throw new DataAccessException("Error: A game with the id already exists");
     }
 
     @Override

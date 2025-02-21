@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.UserDAO;
 import model.AuthData;
@@ -25,6 +26,39 @@ public class UserService {
             throw new ResponseException(403, e.getMessage());
         }
         return authData;
+    }
+
+    public AuthData loginUser(UserData data) throws ResponseException {
+        UserData storedData;
+        AuthData authData;
+        try {
+            storedData = userDAO.getUser(data.username());
+        } catch (DataAccessException e) {
+            throw new ResponseException(401, e.getMessage());
+        }
+
+        if (!storedData.password().equals(data.password())){
+            System.out.println(storedData.password());
+            System.out.println(data.password());
+            throw new ResponseException(401, "Error: passwords don't match");
+        }
+
+        try {
+            authData = authDAO.createAuth(data.username());
+        } catch (DataAccessException e) {
+            throw new ResponseException(500, e.getMessage());
+        }
+
+        return authData;
+
+    }
+
+    public void logoutUser(String authToken) throws ResponseException{
+        try {
+            authDAO.deleteAuth(authToken);
+        } catch (DataAccessException e) {
+            throw new ResponseException(401, e.getMessage());
+        }
     }
 
     public void clearUserData(){
