@@ -1,6 +1,9 @@
 package server;
 
+import java.util.Collection;
+
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
@@ -49,8 +52,8 @@ public class Server {
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
         Spark.get("/game", this::listGames);
-        Spark.post("/game", this::CreateGame);
-        Spark.put("/game", this::JoinGame);
+        Spark.post("/game", this::createGame);
+        Spark.put("/game", this::joinGame);
         Spark.exception(ResponseException.class, this::exceptionHandler);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -105,11 +108,29 @@ public class Server {
     }
 
     private Object listGames(Request req, Response res) throws ResponseException {
-        // TODO
-        throw new UnsupportedOperationException();
+        String authToken = req.headers("authorization");
+
+        if (authToken == null) {
+            throw new ResponseException(400, "Error: Bad Request");
+        }
+
+        // will reaise ResponseException if invalid authToken
+        authService.isValidAuthToken(authToken);
+
+        Collection<GameData> games = gameService.getAllGames();
+
+        var jsonObject = new JsonObject();
+        jsonObject.add("games", gson.toJsonTree(games));
+
+        res.status(200);
+        res.type("application/json");
+
+        return jsonObject.toString();
+        
+
     }
 
-    private Object CreateGame(Request req, Response res) throws ResponseException {
+    private Object createGame(Request req, Response res) throws ResponseException {
 
         String authToken = req.headers("authorization");
         GameData data = gson.fromJson(req.body(), GameData.class);
@@ -126,7 +147,7 @@ public class Server {
         return gson.toJson(newData);
     }
 
-    private Object JoinGame(Request req, Response res) throws ResponseException {
+    private Object joinGame(Request req, Response res) throws ResponseException {
         // TODO
         throw new UnsupportedOperationException();
     }

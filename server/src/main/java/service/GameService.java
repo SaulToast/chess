@@ -2,6 +2,9 @@ package service;
 
 import model.GameData;
 import server.ResponseException;
+
+import java.util.Collection;
+
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.GameDAO;;
 
@@ -36,12 +39,20 @@ public class GameService {
         }
     }
 
+    public Collection<GameData> getAllGames() throws ResponseException {
+        try {
+            return gameDAO.listGames();
+
+        } catch (DataAccessException e) {
+            throw new ResponseException(500, e.getMessage());
+        }
+    }
+
     public void clearGameData() throws ResponseException {
         try {
             gameDAO.clear();
             
         } catch (DataAccessException e) {
-            // TODO: handle exception
             throw new ResponseException(500, e.getMessage());
         }
     }
