@@ -22,7 +22,7 @@ public class UserService {
         try {
             userDAO.addUserData(data);
             authData = authDAO.createAuth(data.username());
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             throw new ResponseException(403, e.getMessage());
         }
         return authData;

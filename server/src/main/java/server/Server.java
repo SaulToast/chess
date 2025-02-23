@@ -9,8 +9,10 @@ import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
 import dataaccess.interfaces.UserDAO;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import service.AuthService;
+import service.GameService;
 import service.UserService;
 import spark.*;
 
@@ -21,6 +23,7 @@ public class Server {
     private final GameDAO gameDAO;
     private final UserService userService;
     private final AuthService authService;
+    private final GameService gameService;
 
     private final Gson gson = new Gson();
 
@@ -32,6 +35,7 @@ public class Server {
 
         userService = new UserService(userDAO, authDAO);
         authService = new AuthService(authDAO);
+        gameService = new GameService(gameDAO);
     }
 
     public int run(int desiredPort) {
@@ -74,16 +78,16 @@ public class Server {
             throw new ResponseException(400, "Error: bad request");
         }
         AuthData authData = userService.createUser(data);
-        return new Gson().toJson(authData);
+        return gson.toJson(authData);
     }
 
     private Object login(Request req, Response res) throws ResponseException {
-        UserData data = new Gson().fromJson(req.body(), UserData.class);
+        UserData data = gson.fromJson(req.body(), UserData.class);
         if (data == null || data.username() == null || data.password() == null){
             throw new ResponseException(400, "Error: bad request");
         }
         var authData = userService.loginUser(data);
-        return new Gson().toJson(authData);
+        return gson.toJson(authData);
 
     }
 
@@ -106,8 +110,20 @@ public class Server {
     }
 
     private Object CreateGame(Request req, Response res) throws ResponseException {
-        // TODO
-        throw new UnsupportedOperationException(); 
+
+        String authToken = req.headers("authorization");
+        GameData data = gson.fromJson(req.body(), GameData.class);
+
+        if (data == null || authToken == null) {
+            throw new ResponseException(400, "Error: Bad Request");
+        }
+        
+        // will raise ResponseException error if invalid authToken
+        authService.isValidAuthToken(authToken);
+
+        GameData newData = gameService.createGame(data);
+        res.status(200);
+        return gson.toJson(newData);
     }
 
     private Object JoinGame(Request req, Response res) throws ResponseException {
@@ -118,6 +134,7 @@ public class Server {
     private Object clear(Request req, Response res) throws ResponseException {
         userService.clearUserData();
         authService.clearAuthData();
+        gameService.clearGameData();
         res.status(200);
         return "";
     }

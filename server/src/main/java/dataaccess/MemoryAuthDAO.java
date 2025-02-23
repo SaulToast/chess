@@ -34,6 +34,14 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
+    public String getAuthToken(String authToken) throws DataAccessException {
+        if (authTokens.containsKey(authToken)) {
+            return authTokens.get(authToken);
+        }
+        throw new DataAccessException("Error: authToken is not valid");
+    }
+
+    @Override
     public void deleteAuth(String authToken) throws DataAccessException {
         if (authTokens.containsKey(authToken)){
             var username = authTokens.remove(authToken);
