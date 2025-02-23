@@ -26,8 +26,8 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public void createGame(GameData g) throws DataAccessException {
-        if (!games.containsKey(g.GameID())){
-            games.put(g.GameID(), g);
+        if (!games.containsKey(g.gameID())){
+            games.put(g.gameID(), g);
             return;
         }
         throw new DataAccessException("Error: A game with the id already exists");
