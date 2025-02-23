@@ -2,7 +2,6 @@ package dataaccess;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import dataaccess.interfaces.AuthDAO;
 import model.AuthData;
 
@@ -17,16 +16,12 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public AuthData createAuth(String username) throws DataAccessException {
-        // if (usernameToAuth.containsKey(username)){
-        //     throw new DataAccessException("Error: Username already has an authToken");
-        // }
+    public AuthData createAuth(String username, String authToken) throws DataAccessException {
 
-        var id = UUID.randomUUID().toString();
-        var data = new AuthData(id, username);
+        var data = new AuthData(authToken, username);
 
-        authTokens.put(id, username);
-        usernameToAuth.put(username, id);
+        authTokens.put(authToken, username);
+        usernameToAuth.put(username, authToken);
 
         return data;
         

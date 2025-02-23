@@ -1,5 +1,6 @@
 package service;
 
+import java.util.UUID;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.UserDAO;
@@ -18,10 +19,11 @@ public class UserService {
     }
 
     public AuthData createUser(UserData data) throws ResponseException {
-        var authData = new AuthData(null, null);
+        AuthData authData;
+        String authToken = UUID.randomUUID().toString();
         try {
             userDAO.addUserData(data);
-            authData = authDAO.createAuth(data.username());
+            authData = authDAO.createAuth(data.username(), authToken);
         } catch (DataAccessException e) {
             throw new ResponseException(403, e.getMessage());
         }
@@ -31,6 +33,8 @@ public class UserService {
     public AuthData loginUser(UserData data) throws ResponseException {
         UserData storedData;
         AuthData authData;
+        String authToken = UUID.randomUUID().toString();
+
         try {
             storedData = userDAO.getUser(data.username());
         } catch (DataAccessException e) {
@@ -44,7 +48,7 @@ public class UserService {
         }
 
         try {
-            authData = authDAO.createAuth(data.username());
+            authData = authDAO.createAuth(data.username(), authToken);
         } catch (DataAccessException e) {
             throw new ResponseException(500, e.getMessage());
         }
