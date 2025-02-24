@@ -13,14 +13,12 @@ import dataaccess.interfaces.GameDAO;;
 public class GameService {
 
     private final GameDAO gameDAO;
-    private final AuthDAO authDAO;
 
     private int gameIDCounter = 1000;
 
-    public GameService(GameDAO gameDAO, AuthDAO authDAO){
+    public GameService(GameDAO gameDAO){
 
         this.gameDAO = gameDAO;
-        this.authDAO = authDAO;
     }
 
     private int generateGameID(){
@@ -44,12 +42,10 @@ public class GameService {
         }
     }
 
-    public void addPlayer(JoinGameRequest data, String authToken) throws ResponseException {
+    public GameData addPlayer(JoinGameRequest data, String username) throws ResponseException {
         GameData storedData;
-        String username;
         try {
             storedData = gameDAO.getGame(data.gameID());
-            username = authDAO.getAuthToken(authToken);
         } catch (DataAccessException e) {
             throw new ResponseException(400, "Error: Bad Request");
         }
@@ -76,6 +72,8 @@ public class GameService {
 
         try {
             gameDAO.updateGame(data.gameID(), newData);
+            return newData;
+
         } catch (Exception e) {
             throw new ResponseException(500, "Error: game doesn't exist");
         }

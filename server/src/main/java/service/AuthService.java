@@ -21,6 +21,14 @@ public class AuthService {
         }
     }
 
+    public String getUser(String authToken) throws ResponseException {
+        try {
+            return authDAO.getAuthToken(authToken);
+        } catch (Exception e) {
+            throw new ResponseException(500, "Error: User doesn't exist");
+        }
+    }
+
     public void clearAuthData(){
         authDAO.clear();
     }

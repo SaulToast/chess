@@ -39,7 +39,7 @@ public class Server {
 
         userService = new UserService(userDAO, authDAO);
         authService = new AuthService(authDAO);
-        gameService = new GameService(gameDAO, authDAO);
+        gameService = new GameService(gameDAO);
     }
 
     public int run(int desiredPort) {
@@ -151,7 +151,8 @@ public class Server {
             throw new ResponseException(400, "Error: Bad Request");
         }
 
-        gameService.addPlayer(joinReq, authToken);
+        var username = authService.getUser(authToken);
+        gameService.addPlayer(joinReq, username);
         res.status(200);
         return "";
     }
