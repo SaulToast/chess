@@ -7,7 +7,6 @@ import server.ResponseException;
 import java.util.Collection;
 
 import dataaccess.DataAccessException;
-import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;;
 
 public class GameService {

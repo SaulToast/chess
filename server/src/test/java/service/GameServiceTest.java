@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -145,5 +144,9 @@ public class GameServiceTest {
 
         assertEquals(new HashSet<>(expectedGames), new HashSet<>(actualGames));
 
+    }
+
+    @Test public void getAllGames_WhenEmpty() {
+        assertDoesNotThrow(() -> {gameService.getAllGames();});
     }
 }
