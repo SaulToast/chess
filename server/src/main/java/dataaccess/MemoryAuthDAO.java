@@ -43,12 +43,16 @@ public class MemoryAuthDAO implements AuthDAO{
             usernameToAuth.remove(username);
             return;
         }
-        throw new DataAccessException("Error: Username doesn't have an associated authToken");
+        throw new DataAccessException("Error: authToken isn't valid");
     }
 
     @Override
     public void clear(){
         authTokens = new HashMap<>();
+    }
+
+    public Map<String, String> getAllAuthData() {
+        return authTokens;
     }
 
 }

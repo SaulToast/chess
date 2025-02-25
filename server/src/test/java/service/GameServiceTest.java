@@ -2,7 +2,9 @@ package service;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
@@ -146,7 +148,32 @@ public class GameServiceTest {
 
     }
 
-    @Test public void getAllGames_WhenEmpty() {
+    @Test 
+    public void getAllGames_WhenEmpty_Passes() {
         assertDoesNotThrow(() -> {gameService.getAllGames();});
     }
+
+    @Test
+    public void clearTest() {
+        GameData inital = new GameData(1001, 
+        null, 
+        null, 
+        "gameOne", 
+        null);
+
+        try {
+            gameDAO.createGame(inital);
+        } catch (Exception e) {
+            fail("Unexpected error when creating a game");
+        }
+
+        var gamesBeforeClear = ((MemoryGameDAO) gameDAO).getAllGameData();
+        assertFalse(gamesBeforeClear.isEmpty());
+        gameService.clearGameData();
+        var gamesAfterClear = ((MemoryGameDAO) gameDAO).getAllGameData();
+        assertTrue(gamesAfterClear.isEmpty());
+
+
+    }
+
 }

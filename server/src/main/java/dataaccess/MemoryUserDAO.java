@@ -37,4 +37,8 @@ public class MemoryUserDAO implements UserDAO{
         users = new HashMap<>();
     }
 
+    public Map<String, UserData> getAllUserData() {
+        return users;
+    }
+
 }

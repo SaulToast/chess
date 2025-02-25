@@ -2,7 +2,9 @@ package service;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +51,23 @@ public class AuthServiceTest {
         });
 
         assertEquals("Error: unauthorized", exception.getMessage());
+
+    }
+
+    @Test
+    public void clearTest() {
+        try {
+            authDAO.createAuth("testUser", "validToken");
+        } catch (DataAccessException e) {
+            fail("unexpected database error");
+        }
+
+        var authTokensBeforeClear = ((MemoryAuthDAO) authDAO).getAllAuthData();
+        assertFalse(authTokensBeforeClear.isEmpty());
+        authService.clearAuthData();
+        var authTokensAfterClear = ((MemoryAuthDAO) authDAO).getAllAuthData();
+        assertTrue(authTokensAfterClear.isEmpty());
+        
 
     }
 
