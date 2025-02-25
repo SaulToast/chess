@@ -44,7 +44,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void createUser_WhenNewUser_Passes() {
+    public void createUserWhenNewUserPasses() {
 
         UserData data = new UserData("test", "1234", "email");
         assertDoesNotThrow(() -> {userService.createUser(data);});
@@ -52,21 +52,21 @@ public class UserServiceTest {
     }
 
     @Test
-    public void createUser_WhenUserAlreadyExists_Fails() {
+    public void createUserWhenUserAlreadyExistsFails() {
         var data = addUserData();
 
         assertThrows(ResponseException.class, () -> {userService.createUser(data);});
     }
 
     @Test
-    public void loginUser_WhenValidUser_Passes(){
+    public void loginUserWhenValidUserPasses(){
         var data = addUserData();
         assertDoesNotThrow(() -> { userService.loginUser(data);});
 
     }
 
     @Test
-    public void loginUser_WhenInvalidUser_RaisesException () {
+    public void loginUserWhenInvalidUserRaisesException () {
 
         UserData data = new UserData("test", "1234", "email");
         ResponseException exception = assertThrows(ResponseException.class, () -> {
@@ -78,7 +78,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void logoutUser_WhenValidUser_Passes () {
+    public void logoutUserWhenValidUserPasses () {
         var data = addUserData();
         try {
             authDAO.createAuth(data.username(), "validToken");
@@ -91,7 +91,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void logoutUser_WhenInvalidUser_RaisesException () {
+    public void logoutUserWhenInvalidUserRaisesException () {
 
         ResponseException exception = assertThrows(ResponseException.class, () -> {
             userService.logoutUser("invalidToken");

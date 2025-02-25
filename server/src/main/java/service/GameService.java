@@ -53,10 +53,14 @@ public class GameService {
         String black = storedData.blackUsername();
         
         if ("WHITE".equalsIgnoreCase(data.playerColor())) {
-            if (white != null) throw new ResponseException(403, "Error: already taken");
+            if (white != null) {
+                throw new ResponseException(403, "Error: already taken");
+            }
             white = username;
         } else if ("BLACK".equalsIgnoreCase(data.playerColor())) {
-            if (black != null) throw new ResponseException(403, "Error: already taken");
+            if (black != null) {
+                throw new ResponseException(403, "Error: already taken");
+            }
             black = username;
         } else {
             throw new ResponseException(400, "Error: Bad Request");

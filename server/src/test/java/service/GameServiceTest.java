@@ -33,7 +33,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void createGame_WhenGivenGoodData_SuccessfullyCreates() {
+    public void createGameWhenGivenGoodDataSuccessfullyCreates() {
         GameData input = new GameData(0, 
         null, 
         null, 
@@ -54,7 +54,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void createGame_WhenGivenDuplicateName_RaisesError() {
+    public void createGameWhenGivenDuplicateNameRaisesError() {
         GameData inital = new GameData(1001, 
         null, 
         null, 
@@ -77,7 +77,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void addPlayer_WhenGivenValidData_CorrectlyAdds() {
+    public void addPlayerWhenGivenValidDataCorrectlyAdds() {
         GameData inital = new GameData(1001, 
             null, 
             null, 
@@ -104,7 +104,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void addPlayer_SpaceAlreadyTaken_RaisesException() {
+    public void addPlayerSpaceAlreadyTakenRaisesException() {
         GameData inital = new GameData(1001, 
         "alreadyOccupied", 
         null, 
@@ -125,7 +125,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void getAllGames_WhenFullOfGames_Passes() {
+    public void getAllGamesWhenFullOfGamesPasses() {
 
         Collection<GameData> expectedGames = Arrays.asList(
             new GameData(1001, null, null, "1001", null),
@@ -149,7 +149,7 @@ public class GameServiceTest {
     }
 
     @Test 
-    public void getAllGames_WhenEmpty_Passes() {
+    public void getAllGamesWhenEmptyPasses() {
         assertDoesNotThrow(() -> {gameService.getAllGames();});
     }
 

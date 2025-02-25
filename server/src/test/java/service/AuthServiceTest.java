@@ -27,7 +27,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void isValidAuthToken_WhenValid_ReturnsTrue() {
+    public void isValidAuthTokenWhenValidReturnsTrue() {
         String validToken = "validToken";
         try {
             authDAO.createAuth("testUser", validToken);
@@ -43,7 +43,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void isValidAuthToken_WhenInvalid_ThrowsException() {
+    public void isValidAuthTokenWhenInvalidThrowsException() {
         String invalidToken = "invalidToken";
 
         ResponseException exception = assertThrows(ResponseException.class, () -> {

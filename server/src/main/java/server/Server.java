@@ -72,7 +72,7 @@ public class Server {
     //#region Handlers
 
     private void exceptionHandler(ResponseException ex, Request req, Response res){
-        res.status(ex.StatusCode());
+        res.status(ex.statusCode());
         res.body(ex.toJson());
     }
 
