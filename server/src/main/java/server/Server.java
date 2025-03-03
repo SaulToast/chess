@@ -22,9 +22,6 @@ import spark.*;
 
 public class Server {
 
-    private final UserDAO userDAO;
-    private final AuthDAO authDAO;
-    private final GameDAO gameDAO;
     private final UserService userService;
     private final AuthService authService;
     private final GameService gameService;
@@ -33,9 +30,9 @@ public class Server {
 
     public Server() {
 
-        userDAO = new MemoryUserDAO();
-        authDAO = new MemoryAuthDAO();
-        gameDAO = new MemoryGameDAO();
+        UserDAO userDAO = new MemoryUserDAO();
+        AuthDAO authDAO = new MemoryAuthDAO();
+        GameDAO gameDAO = new MemoryGameDAO();
 
         userService = new UserService(userDAO, authDAO);
         authService = new AuthService(authDAO);
@@ -157,7 +154,7 @@ public class Server {
         return "";
     }
 
-    private Object clear(Request req, Response res) throws ResponseException {
+    private Object clear(Request req, Response res) {
         userService.clearUserData();
         authService.clearAuthData();
         gameService.clearGameData();
