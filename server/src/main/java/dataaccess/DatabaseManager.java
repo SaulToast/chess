@@ -52,10 +52,10 @@ public class DatabaseManager {
     private static String[] createUserStatement = {
         """
         CREATE TABLE IF NOT EXISTS userData (
-            id INT NOT NULL AUTO_INCREMENT,
             username VARCHAR(255) NOT NULL,
             password VARCHAR(255) NOT NULL,
-            PRIMARY KEY (id),
+            email VARCHAR(255) NOT NULL,
+            PRIMARY KEY (username),
             INDEX(username)
         );
         """
@@ -123,7 +123,7 @@ public class DatabaseManager {
      * }
      * </code>
      */
-    static Connection getConnection() throws DataAccessException {
+    public static Connection getConnection() throws DataAccessException {
         try {
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
             conn.setCatalog(DATABASE_NAME);

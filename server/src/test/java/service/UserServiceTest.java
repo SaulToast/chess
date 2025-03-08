@@ -106,7 +106,11 @@ public class UserServiceTest {
         addUserData();
         var usersBeforeClear = ((MemoryUserDAO) userDAO).getAllUserData();
         assertFalse(usersBeforeClear.isEmpty());
-        userService.clearUserData();
+        try {
+            userService.clearUserData();
+        } catch (ResponseException e) {
+            fail("unexpected database error");
+        }
         var usersAfterClear = ((MemoryUserDAO) userDAO).getAllUserData();
         assertTrue(usersAfterClear.isEmpty());
 

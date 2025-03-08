@@ -30,6 +30,7 @@ public class Server {
     private final UserService userService;
     private final AuthService authService;
     private final GameService gameService;
+    private UserDAO userDAO;
 
     private final Gson gson = new Gson();
 
@@ -37,14 +38,13 @@ public class Server {
 
         try {
             DatabaseManager.createDatabase();
-            DatabaseManager.createUserTable();
-            DatabaseManager.createAuthTable();
-            DatabaseManager.createGameTable();
+            userDAO = new SqlUserDAO();
         } catch (DataAccessException e) {
             System.out.println("couldn't initialize database");
+            userDAO = new MemoryUserDAO();
         }
 
-        UserDAO userDAO = new MemoryUserDAO();
+
         AuthDAO authDAO = new MemoryAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
 
@@ -168,12 +168,17 @@ public class Server {
         return "";
     }
 
-    private Object clear(Request req, Response res) {
-        userService.clearUserData();
-        authService.clearAuthData();
-        gameService.clearGameData();
-        res.status(200);
-        return "";
+    private Object clear(Request req, Response res) throws ResponseException {
+        try {
+            userService.clearUserData();
+            authService.clearAuthData();
+            gameService.clearGameData();
+            res.status(200);
+            return "";
+        } catch (Exception e) {
+            throw new ResponseException(500, "Error: couldn't clear database");
+        }
+
     }
 
     //#endregion
