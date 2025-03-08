@@ -7,15 +7,9 @@ import com.google.gson.JsonObject;
 
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
-import dataaccess.interfaces.AuthDAO;
-import dataaccess.interfaces.GameDAO;
-import dataaccess.interfaces.UserDAO;
-import dataaccess.memoryDAOs.MemoryAuthDAO;
-import dataaccess.memoryDAOs.MemoryGameDAO;
-import dataaccess.memoryDAOs.MemoryUserDAO;
-import dataaccess.sqlDAOs.SqlAuthDAO;
-import dataaccess.sqlDAOs.SqlGameDAO;
-import dataaccess.sqlDAOs.SqlUserDAO;
+import dataaccess.interfaces.*;
+import dataaccess.memoryDAOs.*;
+import dataaccess.sqlDAOs.*;
 import model.AuthData;
 import model.GameData;
 import model.JoinGameRequest;
@@ -31,6 +25,7 @@ public class Server {
     private final AuthService authService;
     private final GameService gameService;
     private UserDAO userDAO;
+    private AuthDAO authDAO;
 
     private final Gson gson = new Gson();
 
@@ -39,13 +34,14 @@ public class Server {
         try {
             DatabaseManager.createDatabase();
             userDAO = new SqlUserDAO();
+            authDAO = new SqlAuthDAO();
         } catch (DataAccessException e) {
             System.out.println("couldn't initialize database");
             userDAO = new MemoryUserDAO();
+            authDAO = new MemoryAuthDAO();
         }
-
-
-        AuthDAO authDAO = new MemoryAuthDAO();
+        
+        
         GameDAO gameDAO = new MemoryGameDAO();
 
         userService = new UserService(userDAO, authDAO);
@@ -176,9 +172,8 @@ public class Server {
             res.status(200);
             return "";
         } catch (Exception e) {
-            throw new ResponseException(500, "Error: couldn't clear database");
+            throw new ResponseException(500, e.getMessage());
         }
-
     }
 
     //#endregion

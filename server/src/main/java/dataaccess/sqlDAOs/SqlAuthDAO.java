@@ -1,12 +1,15 @@
 package dataaccess.sqlDAOs;
 
+import java.sql.SQLException;
+
 import dataaccess.DataAccessException;
-import dataaccess.interfaces.AuthDAO;
+
 import model.AuthData;
 import dataaccess.DatabaseManager;
+import dataaccess.interfaces.AuthDAO;
 
 
-public class SqlAuthDAO implements AuthDAO {
+public class SqlAuthDAO implements AuthDAO{
 
     public SqlAuthDAO() throws DataAccessException {
         try {
@@ -18,26 +21,54 @@ public class SqlAuthDAO implements AuthDAO {
 
     @Override
     public AuthData createAuth(String username, String authToken) throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createAuth'");
+        String insertStatement = "INSERT INTO authData (authToken, username) VALUES (?, ?)";
+        try (var conn = DatabaseManager.getConnection(); var stmt = conn.prepareStatement(insertStatement)) {
+            stmt.setString(1, authToken);
+            stmt.setString(2, username);
+
+            stmt.executeUpdate();
+
+            return new AuthData(authToken, username);
+
+        } catch (Exception e) {
+            throw new DataAccessException("Error: couldn't add authData");
+        }
     }
 
     @Override
-    public String getAuthToken(String authToken) throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAuthToken'");
+    public String getUsernameFromToken(String authToken) throws DataAccessException {
+        String selectStatement = "SELECT username FROM authData WHERE authToken=?";
+        try (var conn = DatabaseManager.getConnection(); var stmt = conn.prepareStatement(selectStatement)) {
+            stmt.setString(1, authToken);
+            try (var rs = stmt.executeQuery()) {
+                rs.next();
+                var username = rs.getString("username");
+                return username;
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("Error: No user associated with given token");
+        }
     }
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteAuth'");
+        String deleteStatement = "DELETE FROM authData WHERE authToken=?";
+        try (var conn = DatabaseManager.getConnection(); var stmt = conn.prepareStatement(deleteStatement)) {
+            stmt.setString(1, authToken);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Error: Couldn't delete requested authData");
+        }
     }
 
     @Override
-    public void clear() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'clear'");
+    public void clear() throws DataAccessException {
+        var truncateStatement = "DELETE FROM authData";
+        try (var conn = DatabaseManager.getConnection(); var stmt = conn.prepareStatement(truncateStatement)) {
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Error: couldn't clear auth table");
+        }
     }
 
 

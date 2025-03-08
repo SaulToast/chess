@@ -64,7 +64,11 @@ public class AuthServiceTest {
 
         var authTokensBeforeClear = ((MemoryAuthDAO) authDAO).getAllAuthData();
         assertFalse(authTokensBeforeClear.isEmpty());
-        authService.clearAuthData();
+        try {
+            authService.clearAuthData();
+        } catch (ResponseException e) {
+            fail("Unexpected database error");
+        }
         var authTokensAfterClear = ((MemoryAuthDAO) authDAO).getAllAuthData();
         assertTrue(authTokensAfterClear.isEmpty());
         

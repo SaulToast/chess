@@ -68,7 +68,6 @@ public class UserService {
     public void clearUserData() throws ResponseException{
         try {
             userDAO.clear();
-            
         } catch (Exception e) {
             throw new ResponseException(500, e.getMessage());
         }
