@@ -1,9 +1,10 @@
-package dataaccess;
+package dataaccess.memoryDAOs;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import dataaccess.DataAccessException;
 import dataaccess.interfaces.GameDAO;
 import model.GameData;
 

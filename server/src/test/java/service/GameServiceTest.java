@@ -15,8 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import dataaccess.DataAccessException;
-import dataaccess.MemoryGameDAO;
 import dataaccess.interfaces.GameDAO;
+import dataaccess.memoryDAOs.MemoryGameDAO;
 import model.GameData;
 import model.JoinGameRequest;
 import server.ResponseException;

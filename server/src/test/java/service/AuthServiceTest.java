@@ -11,8 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
 import dataaccess.interfaces.AuthDAO;
+import dataaccess.memoryDAOs.MemoryAuthDAO;
 import server.ResponseException;
 
 public class AuthServiceTest {

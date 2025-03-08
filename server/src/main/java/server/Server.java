@@ -5,12 +5,17 @@ import java.util.Collection;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
 import dataaccess.interfaces.UserDAO;
+import dataaccess.memoryDAOs.MemoryAuthDAO;
+import dataaccess.memoryDAOs.MemoryGameDAO;
+import dataaccess.memoryDAOs.MemoryUserDAO;
+import dataaccess.sqlDAOs.SqlAuthDAO;
+import dataaccess.sqlDAOs.SqlGameDAO;
+import dataaccess.sqlDAOs.SqlUserDAO;
 import model.AuthData;
 import model.GameData;
 import model.JoinGameRequest;
@@ -29,6 +34,15 @@ public class Server {
     private final Gson gson = new Gson();
 
     public Server() {
+
+        try {
+            DatabaseManager.createDatabase();
+            DatabaseManager.createUserTable();
+            DatabaseManager.createAuthTable();
+            DatabaseManager.createGameTable();
+        } catch (DataAccessException e) {
+            System.out.println("couldn't initialize database");
+        }
 
         UserDAO userDAO = new MemoryUserDAO();
         AuthDAO authDAO = new MemoryAuthDAO();

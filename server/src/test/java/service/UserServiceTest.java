@@ -11,10 +11,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.UserDAO;
+import dataaccess.memoryDAOs.MemoryAuthDAO;
+import dataaccess.memoryDAOs.MemoryUserDAO;
 import model.UserData;
 import server.ResponseException;
 
