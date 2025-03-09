@@ -26,6 +26,7 @@ public class Server {
     private final GameService gameService;
     private UserDAO userDAO;
     private AuthDAO authDAO;
+    private GameDAO gameDAO;
 
     private final Gson gson = new Gson();
 
@@ -35,14 +36,13 @@ public class Server {
             DatabaseManager.createDatabase();
             userDAO = new SqlUserDAO();
             authDAO = new SqlAuthDAO();
+            gameDAO = new SqlGameDAO();
         } catch (DataAccessException e) {
             System.out.println("couldn't initialize database");
             userDAO = new MemoryUserDAO();
             authDAO = new MemoryAuthDAO();
+            gameDAO = new MemoryGameDAO();
         }
-        
-        
-        GameDAO gameDAO = new MemoryGameDAO();
 
         userService = new UserService(userDAO, authDAO);
         authService = new AuthService(authDAO);

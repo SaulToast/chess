@@ -75,7 +75,7 @@ public class DatabaseManager {
     private static String[] createGameDataStatement = {
         """
         CREATE TABLE IF NOT EXISTS gameData (
-            gameID INT NOT NULL AUTO_INCREMENT,
+            gameID INT NOT NULL,
             gameName VARCHAR(255) NOT NULL,
             whiteUsername VARCHAR(255),
             blackUsername VARCHAR(255),

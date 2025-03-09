@@ -6,6 +6,7 @@ import server.ResponseException;
 
 import java.util.Collection;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.GameDAO;;
 
@@ -31,7 +32,7 @@ public class GameService {
             null,
             null, 
             data.gameName(), 
-            null);
+            new ChessGame());
 
         try {
             gameDAO.createGame(newData);
