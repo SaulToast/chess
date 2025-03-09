@@ -1,6 +1,9 @@
 package service;
 
 import java.util.UUID;
+
+import org.mindrot.jbcrypt.BCrypt;
+
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.UserDAO;
@@ -21,6 +24,8 @@ public class UserService {
     public AuthData createUser(UserData data) throws ResponseException {
         AuthData authData;
         String authToken = UUID.randomUUID().toString();
+        String passwordHash = BCrypt.hashpw(data.password(), BCrypt.gensalt());
+        data = new UserData(data.username(), passwordHash, data.email());
         try {
             userDAO.addUserData(data);
             authData = authDAO.createAuth(data.username(), authToken);
@@ -41,9 +46,7 @@ public class UserService {
             throw new ResponseException(401, e.getMessage());
         }
 
-        if (!storedData.password().equals(data.password())){
-            System.out.println(storedData.password());
-            System.out.println(data.password());
+        if (!BCrypt.checkpw(data.password(), storedData.password())){
             throw new ResponseException(401, "Error: passwords don't match");
         }
 

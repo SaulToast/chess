@@ -1,6 +1,7 @@
 package dataaccess.sqlDAOs;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import com.google.gson.Gson;
@@ -33,7 +34,7 @@ public class SqlGameDAO implements GameDAO {
                 var blackUsername = rs.getString("blackUsername");
                 var json = rs.getString("gameJson");
                 var game = new Gson().fromJson(json, ChessGame.class);
-                return new GameData(gameID, name, whiteUsername, blackUsername, game);
+                return new GameData(gameID, whiteUsername, blackUsername, name, game);
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
@@ -59,20 +60,57 @@ public class SqlGameDAO implements GameDAO {
 
     @Override
     public Collection<GameData> listGames() throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'listGames'");
+        var gameList = new ArrayList<GameData>();
+        String selectStatement = "SELECT * FROM gameData";
+        try (var conn = DatabaseManager.getConnection(); var stmt = conn.prepareStatement(selectStatement)) {
+            try (var rs = stmt.executeQuery()) {
+                while(rs.next()) {
+                    var gameID = rs.getInt("gameID");
+                    var name = rs.getString("gameName");
+                    var whiteUsername = rs.getString("whiteUsername");
+                    var blackUsername = rs.getString("blackUsername");
+                    var json = rs.getString("gameJson");
+                    var game = new Gson().fromJson(json, ChessGame.class);
+                    var gameData = new GameData(gameID, whiteUsername, blackUsername, name, game);
+                    gameList.add(gameData);
+                }
+
+                return gameList;
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
     public void updateGame(int gameID, GameData g) throws DataAccessException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateGame'");
+        String updateStatement = """
+        UPDATE gameData 
+        SET gameName = ?, whiteUsername = ?, blackUsername = ?, gameJson = ? 
+        WHERE gameID = ?
+        """;
+        try (var conn = DatabaseManager.getConnection(); var stmt = conn.prepareStatement(updateStatement)) {
+            stmt.setString(1, g.gameName());
+            stmt.setString(2, g.whiteUsername());
+            stmt.setString(3, g.blackUsername());
+            stmt.setString(4, new Gson().toJson(g.game()));
+            stmt.setInt(5, g.gameID());
+            
+            stmt.executeUpdate();
+
+        } catch (Exception e) {
+            throw new DataAccessException("Error: couldn't add gameData - " + e.getMessage());
+        }
     }
 
     @Override
-    public void clear() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'clear'");
+    public void clear() throws DataAccessException {
+        var truncateStatement = "DELETE FROM gameData";
+        try (var conn = DatabaseManager.getConnection(); var stmt = conn.prepareStatement(truncateStatement)) {
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            throw new DataAccessException("Error: couldn't clear gameData table");
+        }
     }
 
 }

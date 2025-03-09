@@ -14,6 +14,7 @@ import java.util.HashSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.GameDAO;
 import dataaccess.memoryDAOs.MemoryGameDAO;
@@ -44,7 +45,7 @@ public class GameServiceTest {
         null, 
         null, 
         "gameOne", 
-        null);
+        new ChessGame());
 
         GameData actual = assertDoesNotThrow(() -> {
             return gameService.createGame(input);
@@ -169,7 +170,11 @@ public class GameServiceTest {
 
         var gamesBeforeClear = ((MemoryGameDAO) gameDAO).getAllGameData();
         assertFalse(gamesBeforeClear.isEmpty());
-        gameService.clearGameData();
+        try {
+            gameService.clearGameData();
+        } catch (ResponseException e) {
+            fail("unexpected database error");
+        }
         var gamesAfterClear = ((MemoryGameDAO) gameDAO).getAllGameData();
         assertTrue(gamesAfterClear.isEmpty());
 

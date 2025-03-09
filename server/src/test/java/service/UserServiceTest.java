@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
@@ -26,8 +27,10 @@ public class UserServiceTest {
 
     private UserData addUserData() {
         UserData data = new UserData("test", "1234", "email");
+        var hashPass = BCrypt.hashpw("1234", BCrypt.gensalt());
+        UserData dataWithHashedPassword = new UserData("test", hashPass, "email");
         try {
-            userDAO.addUserData(data);
+            userDAO.addUserData(dataWithHashedPassword);
         } catch (DataAccessException e) {
             fail("Unexpected database error");
         }

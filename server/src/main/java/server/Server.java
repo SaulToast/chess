@@ -47,6 +47,15 @@ public class Server {
         userService = new UserService(userDAO, authDAO);
         authService = new AuthService(authDAO);
         gameService = new GameService(gameDAO);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                authDAO.clear();
+                System.out.println("Auth data cleared on shutdown.");
+            } catch (Exception e) {
+                System.err.println("Error clearing auth data: " + e.getMessage());
+            }
+        }));
     }
 
     public int run(int desiredPort) {

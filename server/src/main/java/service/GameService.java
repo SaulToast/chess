@@ -92,8 +92,12 @@ public class GameService {
         }
     }
 
-    public void clearGameData() {
-            gameDAO.clear();
+    public void clearGameData() throws ResponseException {
+            try {
+                gameDAO.clear();
+            } catch (DataAccessException e) {
+              throw new ResponseException(500, e.getMessage());
+            }
             
     }
 }
