@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.GameDAO;
-import dataaccess.memoryDAOs.MemoryGame;
+import dataaccess.memoryDAOs.MemoryGameDao;
 import model.GameData;
 import model.JoinGameRequest;
 import server.ResponseException;
@@ -29,7 +29,7 @@ public class GameServiceTest {
 
     @BeforeEach
     void setup() {
-        gameDAO = new MemoryGame();
+        gameDAO = new MemoryGameDao();
         gameService = new GameService(gameDAO);
     }
 
@@ -168,14 +168,14 @@ public class GameServiceTest {
             fail("Unexpected error when creating a game");
         }
 
-        var gamesBeforeClear = ((MemoryGame) gameDAO).getAllGameData();
+        var gamesBeforeClear = ((MemoryGameDao) gameDAO).getAllGameData();
         assertFalse(gamesBeforeClear.isEmpty());
         try {
             gameService.clearGameData();
         } catch (ResponseException e) {
             fail("unexpected database error");
         }
-        var gamesAfterClear = ((MemoryGame) gameDAO).getAllGameData();
+        var gamesAfterClear = ((MemoryGameDao) gameDAO).getAllGameData();
         assertTrue(gamesAfterClear.isEmpty());
 
 

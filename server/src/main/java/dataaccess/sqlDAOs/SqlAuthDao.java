@@ -9,9 +9,9 @@ import dataaccess.DatabaseManager;
 import dataaccess.interfaces.AuthDAO;
 
 
-public class SqlAuth implements AuthDAO{
+public class SqlAuthDao implements AuthDAO{
 
-    public SqlAuth() throws DataAccessException {
+    public SqlAuthDao() throws DataAccessException {
         try {
             DatabaseManager.createAuthTable();
         } catch (Exception e) {

@@ -14,15 +14,15 @@ import org.junit.jupiter.api.Test;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
-import dataaccess.sqlDAOs.SqlGame;
-import dataaccess.sqlDAOs.SqlUser;
+import dataaccess.sqlDAOs.SqlGameDao;
+import dataaccess.sqlDAOs.SqlUserDao;
 import model.GameData;
 import model.UserData;
 
 public class SqlGameDAOTest {
 
-    private static SqlGame gameDAO;
-    private static SqlUser userDAO;
+    private static SqlGameDao gameDAO;
+    private static SqlUserDao userDAO;
     private static GameData testGameData;
 
     @BeforeEach
@@ -32,8 +32,8 @@ public class SqlGameDAOTest {
             stmt.execute("DROP TABLE IF EXISTS gameData");
             stmt.execute("DROP TABLE IF EXISTS userData");
             DatabaseManager.createDatabase();
-            userDAO = new SqlUser();
-            gameDAO = new SqlGame();
+            userDAO = new SqlUserDao();
+            gameDAO = new SqlGameDao();
             testGameData = new GameData(
                 1001, 
                 null, 

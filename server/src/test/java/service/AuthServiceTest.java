@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
-import dataaccess.memoryDAOs.MemoryAuth;
+import dataaccess.memoryDAOs.MemoryAuthDao;
 import server.ResponseException;
 
 public class AuthServiceTest {
@@ -22,7 +22,7 @@ public class AuthServiceTest {
 
     @BeforeEach
     void setup() { 
-        authDAO = new MemoryAuth();
+        authDAO = new MemoryAuthDao();
         authService = new AuthService(authDAO);
     }
 
@@ -62,14 +62,14 @@ public class AuthServiceTest {
             fail("unexpected database error");
         }
 
-        var authTokensBeforeClear = ((MemoryAuth) authDAO).getAllAuthData();
+        var authTokensBeforeClear = ((MemoryAuthDao) authDAO).getAllAuthData();
         assertFalse(authTokensBeforeClear.isEmpty());
         try {
             authService.clearAuthData();
         } catch (ResponseException e) {
             fail("Unexpected database error");
         }
-        var authTokensAfterClear = ((MemoryAuth) authDAO).getAllAuthData();
+        var authTokensAfterClear = ((MemoryAuthDao) authDAO).getAllAuthData();
         assertTrue(authTokensAfterClear.isEmpty());
         
 

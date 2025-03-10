@@ -8,12 +8,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import dataaccess.sqlDAOs.SqlUser;
+import dataaccess.sqlDAOs.SqlUserDao;
 import model.UserData;
 
 public class SqlUserDAOTest {
 
-    private static SqlUser userDAO;
+    private static SqlUserDao userDAO;
 
     @BeforeEach
     void resetDatabase() {
@@ -22,7 +22,7 @@ public class SqlUserDAOTest {
             stmt.execute("DROP TABLE IF EXISTS gameData");
             stmt.execute("DROP TABLE IF EXISTS userData");
             DatabaseManager.createDatabase();
-            userDAO = new SqlUser();
+            userDAO = new SqlUserDao();
         } catch (Exception e) {
             fail("Couldn't reset database: " + e.getMessage());
         }

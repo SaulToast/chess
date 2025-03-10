@@ -10,15 +10,15 @@ import java.sql.SQLException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import dataaccess.sqlDAOs.SqlAuth;
-import dataaccess.sqlDAOs.SqlUser;
+import dataaccess.sqlDAOs.SqlAuthDao;
+import dataaccess.sqlDAOs.SqlUserDao;
 import model.UserData;
 
 
 public class SqlAuthDAOTest {
 
-    private static SqlAuth authDAO;
-    private static SqlUser userDAO;
+    private static SqlAuthDao authDAO;
+    private static SqlUserDao userDAO;
 
     @BeforeEach
     void resetDatabse() throws SQLException {
@@ -27,8 +27,8 @@ public class SqlAuthDAOTest {
             stmt.execute("DROP TABLE IF EXISTS gameData");
             stmt.execute("DROP TABLE IF EXISTS userData");
             DatabaseManager.createDatabase();
-            userDAO = new SqlUser();
-            authDAO = new SqlAuth();
+            userDAO = new SqlUserDao();
+            authDAO = new SqlAuthDao();
             userDAO.addUserData(new UserData("testUser", "password", "email"));
         } catch (Exception e) {
             fail("Couldn't reset database: " + e.getMessage());
