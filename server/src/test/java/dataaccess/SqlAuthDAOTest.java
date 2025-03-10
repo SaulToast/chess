@@ -21,22 +21,12 @@ public class SqlAuthDAOTest {
     private static SqlAuthDAO authDAO;
     private static SqlUserDAO userDAO;
 
-    @BeforeAll
-    static void setup() {
-        try {
-            DatabaseManager.createDatabase();
-            // userdao needs to exist for authdao
-            userDAO = new SqlUserDAO();
-            authDAO = new SqlAuthDAO();
-        } catch (DataAccessException e) {
-            fail("couldn't start database - " + e.getMessage());
-        }
-    }
-
     @BeforeEach
     void resetDatabse() throws SQLException {
         try (var conn = DatabaseManager.getConnection(); var stmt = conn.createStatement()) {
-            stmt.execute("DROP DATABASE IF EXISTS chess;");
+            stmt.execute("DROP TABLE IF EXISTS authData;");
+            stmt.execute("DROP TABLE IF EXISTS gameData");
+            stmt.execute("DROP TABLE IF EXISTS userData");
             DatabaseManager.createDatabase();
             userDAO = new SqlUserDAO();
             authDAO = new SqlAuthDAO();

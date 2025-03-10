@@ -26,24 +26,12 @@ public class SqlGameDAOTest {
     private static SqlUserDAO userDAO;
     private static GameData testGameData;
 
-    @BeforeAll
-    static void setup() {
-        try {
-
-            DatabaseManager.createDatabase();
-            userDAO = new SqlUserDAO();
-            gameDAO = new SqlGameDAO();
-
-        } catch (DataAccessException e) {
-            fail(e.getMessage());
-        }
-
-    }
-
     @BeforeEach
     void resetDatabase() {
         try (var conn = DatabaseManager.getConnection(); var stmt = conn.createStatement()) {
-            stmt.execute("DROP DATABASE IF EXISTS chess");
+            stmt.execute("DROP TABLE IF EXISTS authData");
+            stmt.execute("DROP TABLE IF EXISTS gameData");
+            stmt.execute("DROP TABLE IF EXISTS userData");
             DatabaseManager.createDatabase();
             userDAO = new SqlUserDAO();
             gameDAO = new SqlGameDAO();

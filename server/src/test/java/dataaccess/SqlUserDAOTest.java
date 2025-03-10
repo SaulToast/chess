@@ -16,20 +16,12 @@ public class SqlUserDAOTest {
 
     private static SqlUserDAO userDAO;
 
-    @BeforeAll
-    static void setup() {
-        try {
-            DatabaseManager.createDatabase();
-            userDAO = new SqlUserDAO();
-        } catch (DataAccessException e) {
-            fail("Couldn't initialize database");
-        }
-    }
-
     @BeforeEach
     void resetDatabase() {
         try (var conn = DatabaseManager.getConnection(); var stmt = conn.createStatement()) {
-            stmt.execute("DROP DATABASE IF EXISTS chess");
+            stmt.execute("DROP TABLE IF EXISTS authData");
+            stmt.execute("DROP TABLE IF EXISTS gameData");
+            stmt.execute("DROP TABLE IF EXISTS userData");
             DatabaseManager.createDatabase();
             userDAO = new SqlUserDAO();
         } catch (Exception e) {
