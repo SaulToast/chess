@@ -12,9 +12,9 @@ import dataaccess.DatabaseManager;
 import dataaccess.interfaces.GameDAO;
 import model.GameData;
 
-public class SqlGameDAO implements GameDAO {
+public class SqlGameDao implements GameDAO {
 
-    public SqlGameDAO() throws DataAccessException {
+    public SqlGameDao() throws DataAccessException {
         try {
             DatabaseManager.createGameTable();
         } catch(Exception e) {

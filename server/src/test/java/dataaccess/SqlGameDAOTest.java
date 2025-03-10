@@ -8,22 +8,21 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
-import dataaccess.sqlDAOs.SqlGameDAO;
-import dataaccess.sqlDAOs.SqlUserDAO;
+import dataaccess.sqlDAOs.SqlGameDao;
+import dataaccess.sqlDAOs.SqlUserDao;
 import model.GameData;
 import model.UserData;
 
 public class SqlGameDAOTest {
 
-    private static SqlGameDAO gameDAO;
-    private static SqlUserDAO userDAO;
+    private static SqlGameDao gameDAO;
+    private static SqlUserDao userDAO;
     private static GameData testGameData;
 
     @BeforeEach
@@ -33,8 +32,8 @@ public class SqlGameDAOTest {
             stmt.execute("DROP TABLE IF EXISTS gameData");
             stmt.execute("DROP TABLE IF EXISTS userData");
             DatabaseManager.createDatabase();
-            userDAO = new SqlUserDAO();
-            gameDAO = new SqlGameDAO();
+            userDAO = new SqlUserDao();
+            gameDAO = new SqlGameDao();
             testGameData = new GameData(
                 1001, 
                 null, 

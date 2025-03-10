@@ -7,11 +7,11 @@ import dataaccess.DataAccessException;
 import dataaccess.interfaces.UserDAO;
 import model.UserData;
 
-public class MemoryUserDAO implements UserDAO{
+public class MemoryUserDao implements UserDAO{
 
     private Map<String, UserData> users;
 
-    public MemoryUserDAO() {
+    public MemoryUserDao() {
         users = new HashMap<String, UserData>();
     }
 

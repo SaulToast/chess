@@ -8,11 +8,11 @@ import dataaccess.DataAccessException;
 import dataaccess.interfaces.GameDAO;
 import model.GameData;
 
-public class MemoryGameDAO implements GameDAO{
+public class MemoryGameDao implements GameDAO{
 
     private Map<Integer, GameData> games;
 
-    public MemoryGameDAO(){
+    public MemoryGameDao(){
         games = new HashMap<>();
     }    
 

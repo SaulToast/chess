@@ -7,12 +7,12 @@ import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import model.AuthData;
 
-public class MemoryAuthDAO implements AuthDAO{
+public class MemoryAuthDao implements AuthDAO{
 
     private Map<String, String> authTokens;
     private Map<String, String> usernameToAuth;
 
-    public MemoryAuthDAO() {
+    public MemoryAuthDao() {
         authTokens = new HashMap<>();
         usernameToAuth = new HashMap<>();
     }

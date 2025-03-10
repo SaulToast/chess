@@ -7,9 +7,9 @@ import dataaccess.interfaces.UserDAO;
 import model.UserData;
 import dataaccess.DatabaseManager;
 
-public class SqlUserDAO implements UserDAO{
+public class SqlUserDao implements UserDAO{
 
-    public SqlUserDAO() throws DataAccessException {
+    public SqlUserDao() throws DataAccessException {
         try {
             DatabaseManager.createUserTable();
         } catch (Exception e) {
