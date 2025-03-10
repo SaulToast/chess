@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.GameDAO;
-import dataaccess.memoryDs.MemoryGameDao;
+import dataaccess.memorydaos.MemoryGameDao;
 import model.GameData;
 import model.JoinGameRequest;
 import server.ResponseException;

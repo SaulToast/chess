@@ -10,8 +10,8 @@ import java.sql.SQLException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import dataaccess.sqlDs.SqlAuthDao;
-import dataaccess.sqlDs.SqlUserDao;
+import dataaccess.sqldaos.SqlAuthDao;
+import dataaccess.sqldaos.SqlUserDao;
 import model.UserData;
 
 

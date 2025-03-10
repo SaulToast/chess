@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import dataaccess.sqlDs.SqlUserDao;
+import dataaccess.sqldaos.SqlUserDao;
 import model.UserData;
 
 public class SqlUserDAOTest {

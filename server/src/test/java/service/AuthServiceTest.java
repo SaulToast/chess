@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
-import dataaccess.memoryDs.MemoryAuthDao;
+import dataaccess.memorydaos.MemoryAuthDao;
 import server.ResponseException;
 
 public class AuthServiceTest {

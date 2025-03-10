@@ -1,4 +1,4 @@
-package dataaccess.memoryDs;
+package dataaccess.memorydaos;
 
 import java.util.Collection;
 import java.util.HashMap;

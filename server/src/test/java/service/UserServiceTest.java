@@ -14,8 +14,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.UserDAO;
-import dataaccess.memoryDs.MemoryAuthDao;
-import dataaccess.memoryDs.MemoryUserDao;
+import dataaccess.memorydaos.MemoryAuthDao;
+import dataaccess.memorydaos.MemoryUserDao;
 import model.UserData;
 import server.ResponseException;
 
