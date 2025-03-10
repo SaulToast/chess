@@ -36,15 +36,14 @@ public class SqlAuthDAOTest {
     @BeforeEach
     void resetDatabse() throws SQLException {
         try (var conn = DatabaseManager.getConnection(); var stmt = conn.createStatement()) {
-            stmt.execute("DROP TABLE IF EXISTS authData;");
-            stmt.execute("DROP TABLE IF EXISTS userData;");
+            stmt.execute("DROP DATABASE IF EXISTS chess;");
+            DatabaseManager.createDatabase();
             userDAO = new SqlUserDAO();
             authDAO = new SqlAuthDAO();
             userDAO.addUserData(new UserData("testUser", "password", "email"));
         } catch (Exception e) {
             fail("Couldn't reset database: " + e.getMessage());
         }
-
     }
 
     @Test
@@ -93,7 +92,7 @@ public class SqlAuthDAOTest {
         try {
 
             authDAO.createAuth("testUser", "validAuth");
-            authDAO.deleteAuth("validToken");
+            authDAO.deleteAuth("validAuth");
 
         } catch (DataAccessException e) {
             fail(e.getMessage());
