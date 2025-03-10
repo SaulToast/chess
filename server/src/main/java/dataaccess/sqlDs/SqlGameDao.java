@@ -1,4 +1,4 @@
-package dataaccess.sqlDAOs;
+package dataaccess.sqlDs;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

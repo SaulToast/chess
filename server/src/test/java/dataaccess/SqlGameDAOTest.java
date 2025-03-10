@@ -14,8 +14,8 @@ import org.junit.jupiter.api.Test;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
-import dataaccess.sqlDAOs.SqlGameDao;
-import dataaccess.sqlDAOs.SqlUserDao;
+import dataaccess.sqlDs.SqlGameDao;
+import dataaccess.sqlDs.SqlUserDao;
 import model.GameData;
 import model.UserData;
 
