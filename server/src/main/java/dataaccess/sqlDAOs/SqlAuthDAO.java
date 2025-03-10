@@ -55,8 +55,11 @@ public class SqlAuthDAO implements AuthDAO{
         String deleteStatement = "DELETE FROM authData WHERE authToken=?";
         try (var conn = DatabaseManager.getConnection(); var stmt = conn.prepareStatement(deleteStatement)) {
             stmt.setString(1, authToken);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new DataAccessException("authToken doesn't exist");
+            }
+        } catch (Exception e) {
             throw new DataAccessException("Error: Couldn't delete requested authData");
         }
     }
