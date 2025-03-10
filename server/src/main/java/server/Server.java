@@ -34,14 +34,14 @@ public class Server {
 
         try {
             DatabaseManager.createDatabase();
-            userDAO = new SqlUserDao();
-            authDAO = new SqlAuthDao();
-            gameDAO = new SqlGameDao();
+            userDAO = new SqlUser();
+            authDAO = new SqlAuth();
+            gameDAO = new SqlGame();
         } catch (DataAccessException e) {
             System.out.println("couldn't initialize database");
-            userDAO = new MemoryUserDao();
-            authDAO = new MemoryAuthDao();
-            gameDAO = new MemoryGameDao();
+            userDAO = new MemoryUser();
+            authDAO = new MemoryAuth();
+            gameDAO = new MemoryGame();
         }
 
         userService = new UserService(userDAO, authDAO);

@@ -14,8 +14,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.UserDAO;
-import dataaccess.memoryDAOs.MemoryAuthDao;
-import dataaccess.memoryDAOs.MemoryUserDao;
+import dataaccess.memoryDAOs.MemoryAuth;
+import dataaccess.memoryDAOs.MemoryUser;
 import model.UserData;
 import server.ResponseException;
 
@@ -41,8 +41,8 @@ public class UserServiceTest {
 
     @BeforeEach
     void setup() {
-        userDAO = new MemoryUserDao();
-        authDAO = new MemoryAuthDao();
+        userDAO = new MemoryUser();
+        authDAO = new MemoryAuth();
         userService = new UserService(userDAO, authDAO);
     }
 
@@ -107,14 +107,14 @@ public class UserServiceTest {
     @Test
     public void clearTest() {
         addUserData();
-        var usersBeforeClear = ((MemoryUserDao) userDAO).getAllUserData();
+        var usersBeforeClear = ((MemoryUser) userDAO).getAllUserData();
         assertFalse(usersBeforeClear.isEmpty());
         try {
             userService.clearUserData();
         } catch (ResponseException e) {
             fail("unexpected database error");
         }
-        var usersAfterClear = ((MemoryUserDao) userDAO).getAllUserData();
+        var usersAfterClear = ((MemoryUser) userDAO).getAllUserData();
         assertTrue(usersAfterClear.isEmpty());
 
     }
