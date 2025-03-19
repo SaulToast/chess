@@ -2,7 +2,7 @@ package service;
 
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
-import server.ResponseException;
+import exceptions.ResponseException;
 
 public class AuthService {
 

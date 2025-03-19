@@ -5,6 +5,7 @@ import java.util.Collection;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import exceptions.ResponseException;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import dataaccess.interfaces.*;

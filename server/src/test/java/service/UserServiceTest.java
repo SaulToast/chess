@@ -16,8 +16,8 @@ import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.UserDAO;
 import dataaccess.memorydaos.MemoryAuthDao;
 import dataaccess.memorydaos.MemoryUserDao;
+import exceptions.ResponseException;
 import model.UserData;
-import server.ResponseException;
 
 public class UserServiceTest {
 

@@ -18,9 +18,9 @@ import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.GameDAO;
 import dataaccess.memorydaos.MemoryGameDao;
+import exceptions.ResponseException;
 import model.GameData;
 import model.JoinGameRequest;
-import server.ResponseException;
 
 public class GameServiceTest {
 

@@ -7,9 +7,9 @@ import org.mindrot.jbcrypt.BCrypt;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.UserDAO;
+import exceptions.ResponseException;
 import model.AuthData;
 import model.UserData;
-import server.ResponseException;
 
 public class UserService {
 
