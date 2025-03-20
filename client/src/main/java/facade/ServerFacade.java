@@ -26,28 +26,30 @@ public class ServerFacade {
 
     public void clear() throws ResponseException {
         var path = "/db";
-        makeRequest("DELETE", path, null, null);
+        makeRequest("DELETE", path, null, null, null);
     }
 
     public AuthData register(UserData data) throws ResponseException {
         var path = "/user";
-        return makeRequest("POST", path, data, AuthData.class);
+        return makeRequest("POST", path, null, data, AuthData.class);
 
     }
 
     public AuthData login(UserData data) throws ResponseException {
         var path = "/session";
-        return makeRequest("POST", path, data, AuthData.class);
+        return makeRequest("POST", path, null, data, AuthData.class);
     }
 
     public void logout(AuthData data) throws ResponseException {
         var path = "/session";
-        makeRequest("DELETE", path, data, null);
+        makeRequest("DELETE", path, data.authToken(), null, null);
     }
 
-    public Collection<ChessGame> listGames(AuthData data) throws ResponseException {
-        // TODO
-        throw new UnsupportedOperationException();
+    public Collection<GameData> listGames(AuthData data) throws ResponseException {
+        var path = "/game";
+        record listGamesResponse(ArrayList<GameData> games) {}
+        var response = makeRequest("GET", path, data.authToken(), null, listGamesResponse.class);
+        return response.games();
     }
 
     public GameData createGame() {
@@ -61,11 +63,22 @@ public class ServerFacade {
     }
 
     
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private <T> T makeRequest(
+        String method, 
+        String path, 
+        String token, 
+        Object request, 
+        Class<T> responseClass
+        ) throws ResponseException {
+
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            
             http.setRequestMethod(method);
+            if (token != null) {
+                http.setRequestProperty("Authorization", token);
+            }
             http.setDoOutput(true);
 
             writeBody(request, http);
