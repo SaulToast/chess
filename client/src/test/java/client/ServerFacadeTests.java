@@ -1,20 +1,14 @@
 package client;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.sql.SQLException;
 
 import org.junit.jupiter.api.*;
 
-import com.mysql.cj.exceptions.ExceptionFactory;
-
-import dataaccess.DatabaseManager;
-import dataaccess.sqldaos.SqlAuthDao;
-import dataaccess.sqldaos.SqlGameDao;
-import dataaccess.sqldaos.SqlUserDao;
+import chess.ChessGame;
 import exceptions.ResponseException;
 import server.Server;
 import facade.ServerFacade;
@@ -97,6 +91,13 @@ public class ServerFacadeTests {
         assertThrows(ResponseException.class, () -> {
             facade.logout(authData);
         });
+    }
+
+    @Test
+    void createGamePositive() throws Exception {
+        var authData = facade.register(userData);
+        var gameData = facade.createGame("test game", authData);
+        assertEquals(gameData.game(), new ChessGame());
     }
 
 }

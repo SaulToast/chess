@@ -6,7 +6,6 @@ import java.util.Collection;
 
 import com.google.gson.Gson;
 
-import chess.ChessGame;
 import exceptions.ResponseException;
 import model.AuthData;
 import model.GameData;
@@ -52,9 +51,11 @@ public class ServerFacade {
         return response.games();
     }
 
-    public GameData createGame() {
-        // TODO
-        throw new UnsupportedOperationException();
+    public GameData createGame(String gameName, AuthData authData) throws ResponseException {
+        var path = "/game";
+        record createGameRequest(String gameName) {}
+        var req = new createGameRequest(gameName);
+        return makeRequest("POST", path, authData.authToken(), req, GameData.class);
     }
 
     public void joinGame() {
