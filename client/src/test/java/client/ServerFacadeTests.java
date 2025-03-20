@@ -100,4 +100,12 @@ public class ServerFacadeTests {
         assertEquals(gameData.game(), new ChessGame());
     }
 
+    @Test
+    void createGameNegative() throws Exception {
+        var authData = new AuthData("invalid token", "invalid user");
+        assertThrows(ResponseException.class, () -> {
+            facade.createGame("test game", authData);
+        });
+    }
+
 }
