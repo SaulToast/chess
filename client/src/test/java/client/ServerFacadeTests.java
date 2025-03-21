@@ -2,9 +2,10 @@ package client;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.*;
 
@@ -13,6 +14,7 @@ import exceptions.ResponseException;
 import server.Server;
 import facade.ServerFacade;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 
 
@@ -106,6 +108,32 @@ public class ServerFacadeTests {
         assertThrows(ResponseException.class, () -> {
             facade.createGame("test game", authData);
         });
+    }
+
+    @Test
+    void listGamesPositive() throws Exception {
+        var list = new ArrayList<>();
+        var data1 = new GameData(
+            1001, 
+            null, 
+            null, 
+            "gameOne", 
+            new ChessGame());
+        var data2 = new GameData(
+            1001, 
+            null, 
+            null, 
+            "gameTwo", 
+            new ChessGame());
+        list.add(data1);
+        list.add(data2);
+
+        var authData = facade.register(userData);
+        facade.createGame("gameOne", authData);
+        facade.createGame("gameTwo", authData);
+
+        var result = facade.listGames(authData);
+        assertEquals(list, result);
     }
 
 }
