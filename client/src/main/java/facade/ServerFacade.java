@@ -58,9 +58,11 @@ public class ServerFacade {
         return makeRequest("POST", path, authData.authToken(), req, GameData.class);
     }
 
-    public void joinGame() {
-        // TODO
-        throw new UnsupportedOperationException();
+    public void joinGame(String color, int id, AuthData data) throws ResponseException {
+        var path = "/game";
+        record joinGameRequest(String playerColor, int gameID) {}
+        var req = new joinGameRequest(color, id);
+        makeRequest("PUT", path, data.authToken(), req, null);
     }
 
     

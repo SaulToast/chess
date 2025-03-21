@@ -143,4 +143,21 @@ public class ServerFacadeTests {
         assertTrue(result.isEmpty());
     }
 
+    @Test
+    void joinGamePositive() throws Exception {
+        var authData = facade.register(userData);
+        facade.createGame("test game", authData);
+        facade.joinGame("WHITE", 1001, authData);
+        var dataList = (ArrayList<GameData>) facade.listGames(authData);
+        assertEquals(dataList.get(0).whiteUsername(), userData.username());
+    }
+
+    @Test
+    void joinGameNegative() throws Exception {
+        var authData = facade.register(userData);
+        assertThrows(ResponseException.class, () -> {
+            facade.joinGame("WHITE", 1001, authData);
+        });
+    }
+
 }
