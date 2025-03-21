@@ -120,7 +120,7 @@ public class ServerFacadeTests {
             "gameOne", 
             new ChessGame());
         var data2 = new GameData(
-            1001, 
+            1002, 
             null, 
             null, 
             "gameTwo", 
@@ -134,6 +134,13 @@ public class ServerFacadeTests {
 
         var result = facade.listGames(authData);
         assertEquals(list, result);
+    }
+
+    @Test
+    void listGamesNegative() throws Exception {
+        var authData = facade.register(userData);
+        var result = facade.listGames(authData);
+        assertTrue(result.isEmpty());
     }
 
 }
