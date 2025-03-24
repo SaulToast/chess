@@ -48,7 +48,12 @@ public class ServerFacadeTests {
         facade.clear();
     }
 
-
+    @Test
+    void clearPositive() throws Exception {
+        assertDoesNotThrow(() -> {
+            facade.clear();
+        });
+    }
 
     @Test
     void registerPositive() throws Exception {
