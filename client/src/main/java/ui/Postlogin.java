@@ -1,14 +1,10 @@
 package ui;
 
-import static ui.EscapeSequences.RESET_TEXT_COLOR;
-import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
-import static ui.EscapeSequences.SET_TEXT_COLOR_GREEN;
-
 import java.util.Arrays;
 import java.util.Scanner;
 
 import exceptions.ResponseException;
-import ui.EscapeSequences.*;
+import static ui.EscapeSequences.*;
 
 public class Postlogin {
 
@@ -39,7 +35,7 @@ public class Postlogin {
     }
 
     public void run() {
-        System.out.println("Successfully Logged In");
+        System.out.println(SET_TEXT_COLOR_BLUE + "Successfully Logged In");
         System.out.print(help());
 
         var result = "start";
@@ -64,12 +60,12 @@ public class Postlogin {
 
     public String help() {
         return """
-                - logout
-                - create <game name>
-                - list
-                - join <game name>
-                - watch <game name>
-                - help
+                - logout: logs the current user out
+                - create <game name>: creates a game with the given name
+                - list: lists all games
+                - join <ID> [WHITE|BLACK]: joins the specified game as the given color
+                - watch <ID>: watches the specified game
+                - help: gives list of commands
                 """;
     }
 }

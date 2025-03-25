@@ -1,14 +1,10 @@
 package ui;
 
-import static ui.EscapeSequences.RESET_TEXT_COLOR;
-import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
-import static ui.EscapeSequences.SET_TEXT_COLOR_GREEN;
-
 import java.util.Arrays;
 import java.util.Scanner;
 
 import exceptions.ResponseException;
-import ui.EscapeSequences.*;
+import static ui.EscapeSequences.*;
 
 public class Prelogin {
 
@@ -37,7 +33,8 @@ public class Prelogin {
     }
 
     public void run() {
-        System.out.println("Welcome to chess. Sign in to start.\n");
+        System.out.println(ERASE_SCREEN);
+        System.out.println(SET_TEXT_COLOR_BLUE + "Welcome to chess. Sign in to start.");
         System.out.print(help());
 
         var result = "start";
@@ -61,7 +58,8 @@ public class Prelogin {
     }
 
     public String help() {
-        return """
+        return  """
+
                 - register <username> <password> <email>
                 - login <username> <password>
                 - quit

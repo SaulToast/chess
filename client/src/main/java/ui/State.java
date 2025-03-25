@@ -3,5 +3,6 @@ package ui;
 public enum State {
     EXIT,
     PRELOGIN,
-    POSTLOGIN
+    POSTLOGIN,
+    INGAME
 }

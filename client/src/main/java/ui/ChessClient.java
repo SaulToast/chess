@@ -1,10 +1,15 @@
 package ui;
 
+import static ui.EscapeSequences.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import exceptions.ResponseException;
 import facade.ServerFacade;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 
 public class ChessClient {
@@ -16,6 +21,7 @@ public class ChessClient {
     private final String serverUrl;
     private AuthData authData;
     private State state = State.PRELOGIN;
+    private HashMap<Integer, GameData> idToGameData = new HashMap<>();
 
     public ChessClient(String serverUrl) {
         this.serverUrl = serverUrl;
@@ -44,10 +50,17 @@ public class ChessClient {
             throw new ResponseException(400, "Expected username, password, and email");
         }
         var data = new UserData(params[0], params[1], params[2]);
-        authData = facade.register(data);
-        state = State.POSTLOGIN;
-        System.out.println(String.format("Successfully Registered User: %s", params[0]));
-        return "";
+        try {
+            authData = facade.register(data);
+            state = State.POSTLOGIN;
+            System.out.println(ERASE_SCREEN + String.format("Successfully Registered User: %s", params[0]));
+            return "";  
+        } catch (ResponseException e) {
+            if (e.statusCode() == 403) {
+                throw new ResponseException(403, "User Already Exists");
+            }
+            throw e;
+        }
     }
 
     public String loginUser(String... params) throws ResponseException {
@@ -55,7 +68,8 @@ public class ChessClient {
             throw new ResponseException(400, "Expected <username> <password>");
         }
         authData = facade.login(params[0], params[1]);
-        postlogin.run();
+        state = State.POSTLOGIN;
+        System.out.println(ERASE_SCREEN);
         return "";
     }
 
@@ -67,18 +81,42 @@ public class ChessClient {
     }
 
     public String createGame(String... params) throws ResponseException {
-        facade.createGame(params[0], authData);
+        var str = String.join(" ", params);
+        facade.createGame(str, authData);
         return "Successfully Created Game";
     }
 
     public String listGames() throws ResponseException {
-        // TODO:
-        throw new UnsupportedOperationException();
+        System.out.println();
+        var games = (ArrayList<GameData>) facade.listGames(authData);
+
+        if (games.size() == 0) {
+            return """
+                    There are no current games
+                    """;
+        }
+
+        var allGames = new ArrayList<String>();
+        for (int i = 1; i <= games.size(); i++) {
+            GameData game = (GameData) games.get(i-1);
+            var result = String.format("""
+                Game %d: %s
+                White: %s
+                Black: %s
+                """, i, game.gameName(), game.whiteUsername(), game.blackUsername());
+            allGames.add(result);
+            idToGameData.put(i, game);
+        }
+        return String.join("\n", allGames);
     }
 
     public String joinGame(String... params) throws ResponseException {
-        // TODO:
-        throw new UnsupportedOperationException();
+        if (params.length != 2) {
+            throw new ResponseException(400, "Expected <ID> [WHITE|BLACK]");
+        }
+        int id = idToGameData.get(Integer.parseInt(params[0])).gameID();
+        facade.joinGame(params[1].toUpperCase(), id, authData);
+        return "joining game...";
     }
 
     public String observe(String... params) throws ResponseException {
