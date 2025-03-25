@@ -71,6 +71,21 @@ public class ChessClient {
         return "Successfully Created Game";
     }
 
+    public String listGames() throws ResponseException {
+        // TODO:
+        throw new UnsupportedOperationException();
+    }
+
+    public String joinGame(String... params) throws ResponseException {
+        // TODO:
+        throw new UnsupportedOperationException();
+    }
+
+    public String observe(String... params) throws ResponseException {
+        // TODO:
+        throw new UnsupportedOperationException();
+    }
+
     public String quit() {
         state = State.EXIT;
         return "";

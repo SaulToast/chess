@@ -28,6 +28,9 @@ public class Postlogin {
             return switch (cmd) {
                 case "create" -> client.createGame(params);
                 case "logout" -> client.logoutUser();
+                case "list" -> client.listGames();
+                case "join" -> client.joinGame(params);
+                case "watch" -> client.observe(params);
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -56,7 +59,7 @@ public class Postlogin {
     }
 
     private void printPrompt() {
-        System.out.print("\n" + RESET_TEXT_COLOR + ">>> " + SET_TEXT_COLOR_GREEN);
+        System.out.print("\n" + RESET_TEXT_COLOR + "[LOGGED_IN] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
     public String help() {
@@ -64,8 +67,8 @@ public class Postlogin {
                 - logout
                 - create <game name>
                 - list
-                - play <game name>
-                - observe <game name>
+                - join <game name>
+                - watch <game name>
                 - help
                 """;
     }

@@ -53,11 +53,11 @@ public class Prelogin {
                 System.out.print(msg);
             }
         }
-        System.out.println();
+        System.out.println(RESET_TEXT_COLOR);
     }
 
     private void printPrompt() {
-        System.out.print("\n" + RESET_TEXT_COLOR + ">>> " + SET_TEXT_COLOR_GREEN);
+        System.out.print("\n" + RESET_TEXT_COLOR + "[LOGGED_OUT] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
     public String help() {
