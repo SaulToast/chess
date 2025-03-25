@@ -72,7 +72,7 @@ public class ServerFacadeTests {
     @Test
     void loginUserPositive() throws Exception {
         facade.register(userData);
-        var authData = facade.login(userData);
+        var authData = facade.login("Test User", "password");
         assertTrue(authData.authToken().length() > 10);
 
     }
@@ -80,7 +80,7 @@ public class ServerFacadeTests {
     @Test 
     void loginUserNegative() throws Exception {
         assertThrows(ResponseException.class, () -> {
-            facade.login(userData);
+            facade.login("Invalid User", "password");
         });
     }
 

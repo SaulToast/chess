@@ -10,12 +10,12 @@ import java.util.Scanner;
 import exceptions.ResponseException;
 import ui.EscapeSequences.*;
 
-public class PreIn {
+public class Postlogin {
 
     private final ChessClient client;
     private final Scanner scanner;
 
-    public PreIn(ChessClient client, Scanner scanner) {
+    public Postlogin(ChessClient client, Scanner scanner) {
         this.client = client;
         this.scanner = scanner;
     }
@@ -26,9 +26,8 @@ public class PreIn {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "register" -> client.registerUser(params);
-                case "login" -> client.loginUser(params);
-                case "quit" -> "quit";
+                case "create" -> client.createGame(params);
+                case "logout" -> client.logoutUser();
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -37,11 +36,11 @@ public class PreIn {
     }
 
     public void run() {
-        System.out.println("Welcome to chess. Sign in to start.");
+        System.out.println("Successfully Logged In");
         System.out.print(help());
 
-        var result = "";
-        while (!result.equals("quit")) {
+        var result = "start";
+        while (!result.equals("")) {
             printPrompt();
             String line = scanner.nextLine();
 
@@ -62,9 +61,11 @@ public class PreIn {
 
     public String help() {
         return """
-                - register <username> <password> <email>
-                - login <username> <password>
-                - quit
+                - logout
+                - create <game name>
+                - list
+                - play <game name>
+                - observe <game name>
                 - help
                 """;
     }

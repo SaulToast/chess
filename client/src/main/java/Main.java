@@ -2,7 +2,7 @@ import java.util.Scanner;
 
 import chess.*;
 import ui.ChessClient;
-import ui.PreIn;
+import ui.Prelogin;
 
 public class Main {
     public static void main(String[] args) {
@@ -11,8 +11,6 @@ public class Main {
         System.out.println("♕ 240 Chess Client: " + piece);
 
         var client = new ChessClient(serverUrl);
-        var scanner = new Scanner(System.in);
-        var prelogin = new PreIn(client, scanner);
-        prelogin.run();
+        client.run();
     }
 }

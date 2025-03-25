@@ -34,9 +34,10 @@ public class ServerFacade {
 
     }
 
-    public AuthData login(UserData data) throws ResponseException {
+    public AuthData login(String username, String password) throws ResponseException {
         var path = "/session";
-        return makeRequest("POST", path, null, data, AuthData.class);
+        record loginRequest(String username, String password) {}
+        return makeRequest("POST", path, null, new loginRequest(username, password), AuthData.class);
     }
 
     public void logout(AuthData data) throws ResponseException {
