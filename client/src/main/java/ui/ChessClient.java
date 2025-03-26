@@ -119,7 +119,8 @@ public class ChessClient {
             throw new ResponseException(400, "Expected <ID> [WHITE|BLACK]");
         }
         int localId = Integer.parseInt(params[0]);
-        int id = idToGameData.get(localId).gameID();
+        GameData game = idToGameData.get(localId);
+        int id = game.gameID();
         var team = params[1].toUpperCase();
         if (!team.equals("WHITE") && !team.equals("BLACK")) {
             throw new ResponseException(400, "Invalid team color");
@@ -127,7 +128,7 @@ public class ChessClient {
         facade.joinGame(team, id, authData);
         System.out.println(SET_TEXT_COLOR_BLUE + "joining game...");
         TeamColor color = team.equals("WHITE") ? TeamColor.WHITE  : TeamColor.BLACK;
-        var drawer = new ChessBoardDrawer(color);
+        var drawer = new ChessBoardDrawer(color, game.game());
         drawer.drawBoard();
         
         return "";

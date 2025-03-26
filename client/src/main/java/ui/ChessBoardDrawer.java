@@ -4,8 +4,15 @@ import static ui.EscapeSequences.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPosition;
 import chess.ChessGame.TeamColor;
+import chess.ChessPiece;
+import chess.ChessPiece.PieceType;
 
 public class ChessBoardDrawer {
 
@@ -15,10 +22,34 @@ public class ChessBoardDrawer {
     private final TeamColor perspective;
     private final String[] yLables = {"1", "2", "3", "4", "5", "6", "7", "8"};
     private final String[] xLabels = {"a", "b", "c", "d", "e", "f", "g", "h"};
+    private ChessBoard board;
+
+    private static final Map<TeamColor, Map<PieceType, String>> SYMBOL_MAP = new HashMap<>();
+
+    static {
+        SYMBOL_MAP.put(TeamColor.WHITE, Map.of(
+            PieceType.PAWN, WHITE_PAWN,
+            PieceType.BISHOP, WHITE_BISHOP,
+            PieceType.KNIGHT, WHITE_KNIGHT,
+            PieceType.ROOK, WHITE_ROOK,
+            PieceType.QUEEN, WHITE_QUEEN,
+            PieceType.KING, WHITE_KING
+        ));
+
+        SYMBOL_MAP.put(TeamColor.BLACK, Map.of(
+            PieceType.PAWN, BLACK_PAWN,
+            PieceType.BISHOP, BLACK_BISHOP,
+            PieceType.KNIGHT, BLACK_KNIGHT,
+            PieceType.ROOK, BLACK_ROOK,
+            PieceType.QUEEN, BLACK_QUEEN,
+            PieceType.KING, BLACK_KING
+        ));
+    }
     
-    public ChessBoardDrawer(TeamColor color) {
+    public ChessBoardDrawer(TeamColor color, ChessGame game) {
         out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         perspective = color;
+        this.board = game.getBoard();
     }
 
     public void drawBoard() {
@@ -28,8 +59,8 @@ public class ChessBoardDrawer {
         drawSquares();
         drawRowBorder();
 
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_WHITE);
+        out.print(RESET_BG_COLOR);
+        out.print(RESET_TEXT_COLOR);
     }
 
     private void drawRowBorder() {
@@ -59,23 +90,43 @@ public class ChessBoardDrawer {
 
     private void drawSquares() {
         for (int i = 0; i < 8; i++) {
+
+            int boardRow = (perspective == TeamColor.WHITE) ? 8 - i : i + 1;
+
             for (int j = 0; j < 10; j++) {
                 if (j == 0 || j == 9) {
                     drawColBorderSquare(i);
                     continue;
                 }
+
+                int boardCol = (perspective == TeamColor.WHITE) ? j : 9 - j;
+
+                var piece = board.getPiece(new ChessPosition(boardRow, boardCol));
+
                 if ((i % 2 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 2 == 0)) {
                     out.print(SET_BG_COLOR_WHITE);
                     out.print(SET_TEXT_COLOR_WHITE);
-                    out.print(EMPTY);
                 } else {
                     out.print(SET_BG_COLOR_BLACK);
                     out.print(SET_TEXT_COLOR_BLACK);
+                }
+
+                if (piece != null){
+                    var color = piece.getTeamColor() == TeamColor.WHITE 
+                    ? SET_TEXT_COLOR_RED 
+                    : SET_TEXT_COLOR_BLUE;
+                    out.print(color);
+                    out.print(getChar(piece));
+                } else {
                     out.print(EMPTY);
                 }
             }
             out.println();
         }
+    }
+
+    private String getChar(ChessPiece piece) {
+        return SYMBOL_MAP.get(piece.getTeamColor()).get(piece.getPieceType());
     }
 
     private void drawColBorderSquare(int row) {
