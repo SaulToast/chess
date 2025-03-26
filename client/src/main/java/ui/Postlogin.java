@@ -6,14 +6,10 @@ import java.util.Scanner;
 import exceptions.ResponseException;
 import static ui.EscapeSequences.*;
 
-public class Postlogin {
-
-    private final ChessClient client;
-    private final Scanner scanner;
+public class Postlogin extends Repl {
 
     public Postlogin(ChessClient client, Scanner scanner) {
-        this.client = client;
-        this.scanner = scanner;
+        super(client, scanner);
     }
 
     public String eval(String input) {
@@ -34,32 +30,13 @@ public class Postlogin {
         }
     }
 
-    public void run() {
-        System.out.println(SET_TEXT_COLOR_BLUE + "Successfully Logged In");
-        System.out.print(help());
-
-        var result = "start";
-        while (!result.equals("")) {
-            printPrompt();
-            String line = scanner.nextLine();
-
-            try {
-                result = eval(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result + RESET_TEXT_COLOR);
-            } catch (Throwable e) {
-                var msg = e.toString();
-                System.out.print(msg);
-            }
-        }
-        System.out.println();
-    }
-
-    private void printPrompt() {
+    protected void printPrompt() {
         System.out.print("\n" + RESET_TEXT_COLOR + "[LOGGED_IN] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
     public String help() {
         return """
+        
                 - logout: logs the current user out
                 - create <game name>: creates a game with the given name
                 - list: lists all games

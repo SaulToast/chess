@@ -34,11 +34,15 @@ public class ChessClient {
 
     public void run() {
         while (state != State.EXIT){
+            System.out.println(ERASE_SCREEN);
+            System.out.println(SET_TEXT_COLOR_BLUE);
             switch (state) {
                 case PRELOGIN:
+                    System.out.println("Welcome to Chess. Please sign in to start");
                     prelogin.run();
                     break;
                 case POSTLOGIN:
+                    System.out.println("Successfully logged in");
                     postlogin.run();
                     break;
                 // case INGAME:

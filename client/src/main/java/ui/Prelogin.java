@@ -6,14 +6,10 @@ import java.util.Scanner;
 import exceptions.ResponseException;
 import static ui.EscapeSequences.*;
 
-public class Prelogin {
-
-    private final ChessClient client;
-    private final Scanner scanner;
+public class Prelogin extends Repl {
 
     public Prelogin(ChessClient client, Scanner scanner) {
-        this.client = client;
-        this.scanner = scanner;
+        super(client, scanner);
     }
 
     public String eval(String input) {
@@ -32,28 +28,8 @@ public class Prelogin {
         }
     }
 
-    public void run() {
-        System.out.println(ERASE_SCREEN);
-        System.out.println(SET_TEXT_COLOR_BLUE + "Welcome to chess. Sign in to start.");
-        System.out.print(help());
 
-        var result = "start";
-        while (!result.equals("")) {
-            printPrompt();
-            String line = scanner.nextLine();
-
-            try {
-                result = eval(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result + RESET_TEXT_COLOR);
-            } catch (Throwable e) {
-                var msg = e.toString();
-                System.out.print(msg);
-            }
-        }
-        System.out.println(RESET_TEXT_COLOR);
-    }
-
-    private void printPrompt() {
+    protected void printPrompt() {
         System.out.print("\n" + RESET_TEXT_COLOR + "[LOGGED_OUT] >>> " + SET_TEXT_COLOR_GREEN);
     }
 

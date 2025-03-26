@@ -36,8 +36,8 @@ public class ServerFacade {
 
     public AuthData login(String username, String password) throws ResponseException {
         var path = "/session";
-        record loginRequest(String username, String password) {}
-        return makeRequest("POST", path, null, new loginRequest(username, password), AuthData.class);
+        record LoginRequest(String username, String password) {}
+        return makeRequest("POST", path, null, new LoginRequest(username, password), AuthData.class);
     }
 
     public void logout(AuthData data) throws ResponseException {
@@ -47,22 +47,22 @@ public class ServerFacade {
 
     public Collection<GameData> listGames(AuthData data) throws ResponseException {
         var path = "/game";
-        record listGamesResponse(ArrayList<GameData> games) {}
-        var response = makeRequest("GET", path, data.authToken(), null, listGamesResponse.class);
+        record ListGamesResponse(ArrayList<GameData> games) {}
+        var response = makeRequest("GET", path, data.authToken(), null, ListGamesResponse.class);
         return response.games();
     }
 
     public GameData createGame(String gameName, AuthData authData) throws ResponseException {
         var path = "/game";
-        record createGameRequest(String gameName) {}
-        var req = new createGameRequest(gameName);
+        record CreateGameRequest(String gameName) {}
+        var req = new CreateGameRequest(gameName);
         return makeRequest("POST", path, authData.authToken(), req, GameData.class);
     }
 
     public void joinGame(String color, int id, AuthData data) throws ResponseException {
         var path = "/game";
-        record joinGameRequest(String playerColor, int gameID) {}
-        var req = new joinGameRequest(color, id);
+        record JoinGameRequest(String playerColor, int gameID) {}
+        var req = new JoinGameRequest(color, id);
         makeRequest("PUT", path, data.authToken(), req, null);
     }
 

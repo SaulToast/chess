@@ -16,7 +16,7 @@ import chess.ChessPiece.PieceType;
 
 public class ChessBoardDrawer {
 
-    private final int BOARD_SIZE = 10;
+    private static final int BOARD_SIZE = 10;
 
     private final PrintStream out;
     private final TeamColor perspective;
