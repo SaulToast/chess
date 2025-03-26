@@ -24,21 +24,12 @@ public class ServerFacadeTests {
     static ServerFacade facade;
     UserData userData;
 
-    @BeforeAll
-    public static void init() {
+    @BeforeEach
+    void setUp() throws ResponseException {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
         facade = new ServerFacade(port);
-    }
-
-    @AfterAll
-    static void stopServer() {
-        server.stop();
-    }
-
-    @BeforeEach
-    void setUp() throws ResponseException {
         facade.clear();
         userData = new UserData("Test User", "password", "email");
     }
@@ -46,10 +37,19 @@ public class ServerFacadeTests {
     @AfterEach
     void resetDatabase() throws ResponseException{
         facade.clear();
+        server.stop();
     }
 
     @Test
     void clearPositive() throws Exception {
+        facade.register(userData);
+        assertDoesNotThrow(() -> {
+            facade.clear();
+        });
+    }
+
+    @Test 
+    void clearNegative() throws Exception {
         assertDoesNotThrow(() -> {
             facade.clear();
         });
