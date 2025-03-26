@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import chess.ChessGame.TeamColor;
 import exceptions.ResponseException;
 import facade.ServerFacade;
 import model.AuthData;
@@ -40,6 +41,9 @@ public class ChessClient {
                 case POSTLOGIN:
                     postlogin.run();
                     break;
+                // case INGAME:
+                //     ingame.run();
+                //     break;
                 default:
             }
         }
@@ -114,9 +118,19 @@ public class ChessClient {
         if (params.length != 2) {
             throw new ResponseException(400, "Expected <ID> [WHITE|BLACK]");
         }
-        int id = idToGameData.get(Integer.parseInt(params[0])).gameID();
-        facade.joinGame(params[1].toUpperCase(), id, authData);
-        return "joining game...";
+        int localId = Integer.parseInt(params[0]);
+        int id = idToGameData.get(localId).gameID();
+        var team = params[1].toUpperCase();
+        if (!team.equals("WHITE") && !team.equals("BLACK")) {
+            throw new ResponseException(400, "Invalid team color");
+        }
+        facade.joinGame(team, id, authData);
+        System.out.println(SET_TEXT_COLOR_BLUE + "joining game...");
+        TeamColor color = team.equals("WHITE") ? TeamColor.WHITE  : TeamColor.BLACK;
+        var drawer = new ChessBoardDrawer(color);
+        drawer.drawBoard();
+        
+        return "";
     }
 
     public String observe(String... params) throws ResponseException {
