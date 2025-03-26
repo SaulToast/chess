@@ -27,7 +27,7 @@ public abstract class Repl {
                 System.out.print(msg);
             }
         }
-        System.out.println(RESET_TEXT_COLOR);
+        System.out.print(RESET_TEXT_COLOR);
     }
 
     protected abstract void printPrompt();

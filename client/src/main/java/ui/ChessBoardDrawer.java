@@ -84,7 +84,9 @@ public class ChessBoardDrawer {
                 out.print(EMPTY);
             }
         }
-
+        
+        out.print(RESET_BG_COLOR);
+        out.print(RESET_TEXT_COLOR);
         out.println();
     }
 

@@ -33,21 +33,18 @@ public class ChessClient {
     }
 
     public void run() {
+        System.out.println(ERASE_SCREEN + 
+            SET_TEXT_COLOR_BLUE + 
+            "Welcome to Chess. Please sign in or type help to start");
         while (state != State.EXIT){
-            System.out.println(ERASE_SCREEN);
-            System.out.println(SET_TEXT_COLOR_BLUE);
+            System.out.print(SET_TEXT_COLOR_BLUE);
             switch (state) {
                 case PRELOGIN:
-                    System.out.println("Welcome to Chess. Please sign in to start");
                     prelogin.run();
                     break;
                 case POSTLOGIN:
-                    System.out.println("Successfully logged in");
                     postlogin.run();
                     break;
-                // case INGAME:
-                //     ingame.run();
-                //     break;
                 default:
             }
         }
@@ -78,13 +75,14 @@ public class ChessClient {
         authData = facade.login(params[0], params[1]);
         state = State.POSTLOGIN;
         System.out.println(ERASE_SCREEN);
+        System.out.println(SET_TEXT_COLOR_BLUE + "Successfully logged in");
         return "";
     }
 
     public String logoutUser(String... params) throws ResponseException {
         facade.logout(authData);
         state = State.PRELOGIN;
-        System.out.println(String.format("Successfully Logged Out User"));
+        System.out.println(SET_TEXT_COLOR_BLUE + String.format("Successfully Logged Out User"));
         return "";
     }
 
@@ -122,8 +120,7 @@ public class ChessClient {
         if (params.length != 2) {
             throw new ResponseException(400, "Expected <ID> [WHITE|BLACK]");
         }
-        int localId = Integer.parseInt(params[0]);
-        GameData game = idToGameData.get(localId);
+        GameData game = getGame(params);
         int id = game.gameID();
         var team = params[1].toUpperCase();
         if (!team.equals("WHITE") && !team.equals("BLACK")) {
@@ -138,9 +135,29 @@ public class ChessClient {
         return "";
     }
 
+    private GameData getGame(String... params) throws ResponseException {
+        int localId;
+        GameData game = null;
+        try {
+            localId = Integer.parseInt(params[0]);
+            game = idToGameData.get(localId);
+        } catch (NumberFormatException e) {
+            throw new ResponseException(400, "Game ID should be a number");
+        }
+        if (game == null) {
+            throw new ResponseException(400, "Incorrect Game ID");
+        }
+        return game;
+    }
+
     public String observe(String... params) throws ResponseException {
-        // TODO:
-        throw new UnsupportedOperationException();
+        if (params.length != 1) {
+            throw new ResponseException(400, "Expected <game number>");
+        }
+        GameData game = getGame(params);
+        var drawer = new ChessBoardDrawer(TeamColor.WHITE, game.game());
+        drawer.drawBoard();
+        return "";
     }
 
     public String quit() {
