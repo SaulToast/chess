@@ -16,6 +16,7 @@ public class Prelogin extends Repl {
         try {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
+            if (tokens.length == 0) { return help(); }
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "register" -> client.registerUser(params);
