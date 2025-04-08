@@ -2,6 +2,8 @@ package websocket.commands;
 
 import java.util.Objects;
 
+import chess.ChessMove;
+
 /**
  * Represents a command a user can send the server over a websocket
  *
@@ -18,6 +20,8 @@ public class UserGameCommand {
 
     private String teamColor;
 
+    private ChessMove move;
+
     public UserGameCommand(CommandType commandType, String authToken, int gameID) {
         this.commandType = commandType;
         this.authToken = authToken;
@@ -29,6 +33,14 @@ public class UserGameCommand {
         this.authToken = authToken;
         this.gameID = gameID;
         this.teamColor = teamColor;
+    }
+
+    public UserGameCommand(CommandType commandType, String authToken, int gameID, ChessMove move) {
+        this.commandType = commandType;
+        this.gameID = gameID;
+        this.move = move;
+        this.authToken = authToken;
+
     }
 
     public enum CommandType {
@@ -52,6 +64,10 @@ public class UserGameCommand {
 
     public String getColor() {
         return teamColor;
+    }
+
+    public ChessMove getMove() {
+        return move;
     }
 
     @Override

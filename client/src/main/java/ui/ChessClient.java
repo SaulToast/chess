@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import chess.ChessGame.TeamColor;
 import exceptions.ResponseException;
 import facade.NotificationHandler;
@@ -186,8 +188,31 @@ public class ChessClient {
     }
 
     public String makeMove(String... params) throws ResponseException {
-        // TODO
-        throw new UnsupportedOperationException();
+        if (params.length != 2) {
+            throw new ResponseException(500, "Invalid move format. Expected <start> <end> like e2 e4");
+        }
+        var start = parsePosition(params[0]);
+        var end = parsePosition(params[1]);
+        var move = new ChessMove(start, end);
+        ws.makeMove(authData.username(), currentGame.gameID(), move);
+        return "";
+    }
+
+    private ChessPosition parsePosition(String input) throws ResponseException {
+        if (input.length() != 2) {
+            throw new ResponseException(500, "Invalid position");
+        }
+
+        char colChar = input.charAt(0);
+        char rowChar = input.charAt(1);
+        int col = colChar - 'a' + 1;
+        int row = rowChar - '1' + 1;
+
+        if (col < 1 || col > 8 || row < 1 || row > 8) {
+            throw new ResponseException(500, "Invalid coordinates" + input);
+        }
+
+        return new ChessPosition(row, col);
     }
 
     public String leaveGame() throws ResponseException {

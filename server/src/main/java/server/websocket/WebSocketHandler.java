@@ -14,6 +14,9 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
 import com.google.gson.Gson;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
@@ -38,7 +41,7 @@ public class WebSocketHandler {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getAuthToken(), command.getGameID(), command.getColor(), session);
-            case MAKE_MOVE -> make_move(command.getGameID());
+            case MAKE_MOVE -> make_move(command.getAuthToken(), command.getGameID(), command.getMove(), session);
             case LEAVE -> leave(command.getAuthToken(), command.getGameID(), command.getColor(), session);
             case RESIGN -> resign(command.getGameID());
         }
@@ -62,8 +65,29 @@ public class WebSocketHandler {
         }
     }
 
-    private void make_move(int gameID) {
+    private void make_move(String name, int gameID, ChessMove move, Session session) throws IOException {
+        try {
+            var data = gameDAO.getGame(gameID);
+            var game = data.game();
+            game.makeMove(move);
+            var newData = new GameData(gameID, data.whiteUsername(), data.blackUsername(), data.gameName(), game);
+            gameDAO.updateGame(gameID, newData);
 
+            var response = new ServerMessage(ServerMessageType.LOAD_GAME, game);
+            connections.broadcast("", gameID, response);
+
+            var message = String.format("%s made move %s", name, move);
+            var notification = new ServerMessage(ServerMessageType.NOTIFICATION, message);
+            connections.broadcast(name, gameID, notification);
+            
+        } catch (DataAccessException e) {
+            var errResponse = new ServerMessage(ServerMessageType.ERROR, "Error: couldn't make move");
+            session.getRemote().sendString(new Gson().toJson(errResponse));
+        } catch (InvalidMoveException e) {
+            var errResponse = new ServerMessage(ServerMessageType.ERROR, "invalid move");
+            session.getRemote().sendString(new Gson().toJson(errResponse));
+        }
+        
     }
 
     private void leave(String name, int gameID, String color, Session session) throws IOException {
