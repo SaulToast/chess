@@ -8,7 +8,9 @@ import java.util.Scanner;
 
 import chess.ChessGame.TeamColor;
 import exceptions.ResponseException;
+import facade.NotificationHandler;
 import facade.ServerFacade;
+import facade.WebSocketFacade;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -18,11 +20,14 @@ public class ChessClient {
     private final ServerFacade facade;
     private final Prelogin prelogin;
     private final Postlogin postlogin;
+    private final InGame inGame;
     private Scanner scanner;
     private final String serverUrl;
     private AuthData authData;
     private State state = State.PRELOGIN;
     private HashMap<Integer, GameData> idToGameData = new HashMap<>();
+    private WebSocketFacade ws;
+    private final NotificationHandler notificationHandler;
 
     public ChessClient(String serverUrl) {
         this.serverUrl = serverUrl;
@@ -30,6 +35,8 @@ public class ChessClient {
         scanner = new Scanner(System.in);
         prelogin = new Prelogin(this, scanner);
         postlogin = new Postlogin(this, scanner);
+        inGame = new InGame(this, scanner);
+        notificationHandler = inGame;
     }
 
     public void run() {
@@ -127,11 +134,8 @@ public class ChessClient {
             throw new ResponseException(400, "Invalid team color");
         }
         facade.joinGame(team, id, authData);
-        System.out.println(SET_TEXT_COLOR_BLUE + "joining game...");
         TeamColor color = team.equals("WHITE") ? TeamColor.WHITE  : TeamColor.BLACK;
-        var drawer = new ChessBoardDrawer(color, game.game());
-        drawer.drawBoard();
-        
+        ws = new WebSocketFacade(serverUrl, notificationHandler);
         return "";
     }
 
@@ -163,6 +167,21 @@ public class ChessClient {
     public String quit() {
         state = State.EXIT;
         return "";
+    }
+
+    public String makeMove(String... params) throws ResponseException {
+        // TODO
+        throw new UnsupportedOperationException();
+    }
+
+    public String leaveGame() throws ResponseException {
+        // TODO
+        throw new UnsupportedOperationException();
+    }
+
+    public String resignGame() throws ResponseException {
+        // TODO
+        throw new UnsupportedOperationException();
     }
 
 

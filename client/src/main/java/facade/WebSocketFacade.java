@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.management.Notification;
+import javax.swing.RowFilter.ComparisonType;
 import javax.websocket.*;
 
 import com.google.gson.Gson;
@@ -47,9 +48,9 @@ public class WebSocketFacade extends Endpoint {
     public void onOpen(Session session, EndpointConfig config) {
     }
 
-    public void joinGame(String authToken) throws ResponseException {
+    public void joinGame(String authToken, int gameID) throws ResponseException {
         try {
-            var command = new UserGameCommand(CommandType.CONNECT, authToken, null);
+            var command = new UserGameCommand(CommandType.CONNECT, authToken, gameID);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());
@@ -57,5 +58,15 @@ public class WebSocketFacade extends Endpoint {
     }
 
     public void makeMove(int gameID, ChessMove move) {}
+
+    public void leaveGame(String authToken, int gameID) throws ResponseException {
+        try {
+            var command = new UserGameCommand(CommandType.LEAVE, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+            this.session.close();
+        } catch (IOException ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
 
 }

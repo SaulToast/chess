@@ -1,9 +1,13 @@
 package ui;
 
 import java.util.Scanner;
+
+import facade.NotificationHandler;
+import websocket.messages.ServerMessage;
+
 import static ui.EscapeSequences.*;
 
-public abstract class Repl {
+public abstract class Repl implements NotificationHandler {
     protected final ChessClient client;
     protected final Scanner scanner;
 
@@ -28,6 +32,12 @@ public abstract class Repl {
             }
         }
         System.out.print(RESET_TEXT_COLOR);
+    }
+
+    @Override
+    public void notify(ServerMessage message) {
+        System.out.println(SET_TEXT_COLOR_RED + message.toString());
+        printPrompt();
     }
 
     protected abstract void printPrompt();

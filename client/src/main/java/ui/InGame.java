@@ -5,25 +5,26 @@ import java.util.Scanner;
 
 import exceptions.ResponseException;
 import websocket.messages.ServerMessage;
-
 import static ui.EscapeSequences.*;
 
-public class Prelogin extends Repl {
+public class InGame extends Repl {
 
-    public Prelogin(ChessClient client, Scanner scanner) {
+    
+    public InGame(ChessClient client, Scanner scanner) {
         super(client, scanner);
     }
 
-    public String eval(String input) {
+    @Override
+    protected String eval(String input) {
         try {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             if (tokens.length == 0) { return help(); }
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "register" -> client.registerUser(params);
-                case "login" -> client.loginUser(params);
-                case "quit" -> client.quit();
+                case "move" -> client.makeMove(params);
+                case "leave" -> client.leaveGame();
+                case "resign" -> client.resignGame();
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -31,19 +32,16 @@ public class Prelogin extends Repl {
         }
     }
 
-
+    
+    @Override
     protected void printPrompt() {
-        System.out.print("\n" + RESET_TEXT_COLOR + "[LOGGED_OUT] >>> " + SET_TEXT_COLOR_GREEN);
+        System.out.print("\n" + RESET_TEXT_COLOR + "[IN_GAME] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
+    @Override
     public String help() {
-        return  """
-
-                - register <username> <password> <email>
-                - login <username> <password>
-                - quit
-                - help
-                """;
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'help'");
     }
 
 }
