@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import chess.ChessGame;
 import chess.ChessGame.TeamColor;
 import exceptions.ResponseException;
 import facade.NotificationHandler;
@@ -28,6 +29,7 @@ public class ChessClient {
     private HashMap<Integer, GameData> idToGameData = new HashMap<>();
     private WebSocketFacade ws;
     private final NotificationHandler notificationHandler;
+    private TeamColor color = TeamColor.WHITE;
 
     public ChessClient(String serverUrl) {
         this.serverUrl = serverUrl;
@@ -51,6 +53,9 @@ public class ChessClient {
                     break;
                 case POSTLOGIN:
                     postlogin.run();
+                    break;
+                case INGAME:
+                    inGame.run();
                     break;
                 default:
             }
@@ -134,8 +139,10 @@ public class ChessClient {
             throw new ResponseException(400, "Invalid team color");
         }
         facade.joinGame(team, id, authData);
-        TeamColor color = team.equals("WHITE") ? TeamColor.WHITE  : TeamColor.BLACK;
-        ws = new WebSocketFacade(serverUrl, notificationHandler);
+        color = team.equals("WHITE") ? TeamColor.WHITE  : TeamColor.BLACK;
+        ws = new WebSocketFacade(serverUrl, notificationHandler, this);
+        ws.joinGame(authData.username(), params[1].toLowerCase(), id);
+        state = State.INGAME;
         return "";
     }
 
@@ -167,6 +174,11 @@ public class ChessClient {
     public String quit() {
         state = State.EXIT;
         return "";
+    }
+
+    public void drawGame(ChessGame game) {
+        var drawer = new ChessBoardDrawer(color, game);
+        drawer.drawBoard();
     }
 
     public String makeMove(String... params) throws ResponseException {

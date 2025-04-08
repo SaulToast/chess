@@ -10,16 +10,25 @@ import java.util.Objects;
  */
 public class UserGameCommand {
 
-    private final CommandType commandType;
+    private CommandType commandType;
 
-    private final String authToken;
+    private String authToken;
 
-    private final Integer gameID;
+    private int gameID;
 
-    public UserGameCommand(CommandType commandType, String authToken, Integer gameID) {
+    private String teamColor;
+
+    public UserGameCommand(CommandType commandType, String authToken, int gameID) {
         this.commandType = commandType;
         this.authToken = authToken;
         this.gameID = gameID;
+    }
+
+    public UserGameCommand(CommandType commandType, String authToken, int gameID, String teamColor) {
+        this.commandType = commandType;
+        this.authToken = authToken;
+        this.gameID = gameID;
+        this.teamColor = teamColor;
     }
 
     public enum CommandType {
@@ -37,8 +46,12 @@ public class UserGameCommand {
         return authToken;
     }
 
-    public Integer getGameID() {
+    public int getGameID() {
         return gameID;
+    }
+
+    public String getColor() {
+        return teamColor;
     }
 
     @Override

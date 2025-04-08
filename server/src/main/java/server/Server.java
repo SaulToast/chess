@@ -15,6 +15,7 @@ import model.AuthData;
 import model.GameData;
 import model.JoinGameRequest;
 import model.UserData;
+import server.websocket.WebSocketHandler;
 import service.AuthService;
 import service.GameService;
 import service.UserService;
@@ -30,6 +31,8 @@ public class Server {
     private GameDAO gameDAO;
 
     private final Gson gson = new Gson();
+
+    private final WebSocketHandler webSocketHandler;
 
     public Server() {
 
@@ -49,6 +52,8 @@ public class Server {
         authService = new AuthService(authDAO);
         gameService = new GameService(gameDAO);
 
+        webSocketHandler = new WebSocketHandler(userDAO, authDAO, gameDAO);
+
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 authDAO.clear();
@@ -65,6 +70,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
+        Spark.webSocket("/ws", webSocketHandler);
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);
