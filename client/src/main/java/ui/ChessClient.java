@@ -30,6 +30,7 @@ public class ChessClient {
     private WebSocketFacade ws;
     private final NotificationHandler notificationHandler;
     private TeamColor color = TeamColor.WHITE;
+    private GameData currentGame = null;
 
     public ChessClient(String serverUrl) {
         this.serverUrl = serverUrl;
@@ -139,6 +140,7 @@ public class ChessClient {
             throw new ResponseException(400, "Invalid team color");
         }
         facade.joinGame(team, id, authData);
+        currentGame = game;
         color = team.equals("WHITE") ? TeamColor.WHITE  : TeamColor.BLACK;
         ws = new WebSocketFacade(serverUrl, notificationHandler, this);
         ws.joinGame(authData.username(), params[1].toLowerCase(), id);
@@ -180,6 +182,7 @@ public class ChessClient {
     public void drawGame(ChessGame game) {
         var drawer = new ChessBoardDrawer(color, game);
         drawer.drawBoard();
+        inGame.printPrompt();
     }
 
     public String makeMove(String... params) throws ResponseException {
@@ -188,8 +191,11 @@ public class ChessClient {
     }
 
     public String leaveGame() throws ResponseException {
-        // TODO
-        throw new UnsupportedOperationException();
+        state = State.POSTLOGIN;
+        var currColor = color == TeamColor.WHITE ? "white" : "black";
+        ws.leaveGame(authData.username(), currColor, currentGame.gameID());
+        System.out.print(SET_TEXT_COLOR_BLUE + "You left the game" + RESET_TEXT_COLOR);
+        return "";
     }
 
     public String resignGame() throws ResponseException {
