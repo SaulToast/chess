@@ -166,8 +166,9 @@ public class ChessClient {
             throw new ResponseException(400, "Expected <game number>");
         }
         GameData game = getGame(params);
-        var drawer = new ChessBoardDrawer(TeamColor.WHITE, game.game());
-        drawer.drawBoard();
+        color = TeamColor.WHITE;
+        ws = new WebSocketFacade(serverUrl, notificationHandler, this);
+        ws.joinGame(authData.username(), "an observer", game.gameID());
         return "";
     }
 
