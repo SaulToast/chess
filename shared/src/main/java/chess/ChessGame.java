@@ -16,7 +16,16 @@ public class ChessGame {
     private ChessPosition enPassantTarget;
     private ChessPiece enPassantWouldCapture;
     private int enPassantResetCounter = 0;
-    // data for castling
+    
+    private boolean isOver = false;
+    
+    public boolean isOver() {
+        return isOver;
+    }
+
+    public void setOver(boolean over) {
+        this.isOver = over;
+    }
 
 
     public ChessGame() {

@@ -71,20 +71,25 @@ public class WebSocketHandler {
         try {
             var name = authDAO.getUsernameFromToken(authToken);
             var data = gameDAO.getGame(gameID);
+
             if (data.whiteUsername() == null || data.blackUsername() == null) {
                 throw new InvalidMoveException("Wait for a second player");
             }
-            var game = data.game();
-            var color = name == data.whiteUsername() ? TeamColor.WHITE : TeamColor.BLACK;
-            var otherTeam = game.getTeamTurn();
 
-            if (!color.equals(otherTeam)) {
+            var game = data.game();
+
+            if (game.isOver()) {
+                throw new InvalidMoveException("Game is already over");
+            }
+
+            var color = name.equals(data.whiteUsername()) ? TeamColor.WHITE : TeamColor.BLACK;
+
+
+            if (!color.equals(game.getTeamTurn())) {
                 throw new InvalidMoveException("Not your turn");
             }
 
             game.makeMove(move);
-            var newData = new GameData(gameID, data.whiteUsername(), data.blackUsername(), data.gameName(), game);
-            gameDAO.updateGame(gameID, newData);
 
             var response = new ServerMessage(ServerMessageType.LOAD_GAME, game);
             connections.broadcast("", gameID, response);
@@ -93,26 +98,10 @@ public class WebSocketHandler {
             var notification = new ServerMessage(ServerMessageType.NOTIFICATION, message);
             connections.broadcast(name, gameID, notification);
 
-            var otherPlayer = otherTeam == TeamColor.BLACK ? data.blackUsername() : data.whiteUsername();
-            message = "";
-            var specialState = false;
-            if (game.isInCheck(otherTeam)) {
-                message = " is in check";
-                specialState = true;
-            }
-            if (game.isInCheckmate(otherTeam)) {
-                message = " is in checkmate";
-                specialState = true;
-            }
-            if (game.isInStalemate(otherTeam)) {
-                message = " is in stalemate";
-                specialState = true;
-            }
-            if (specialState){
-                notification = new ServerMessage(ServerMessageType.NOTIFICATION, otherPlayer + message);
-                connections.broadcast(name, gameID, notification);
-            }
+            handleSpecialGameStates(gameID, data, game);
 
+            var newData = new GameData(gameID, data.whiteUsername(), data.blackUsername(), data.gameName(), game);
+            gameDAO.updateGame(gameID, newData);
             
         } catch (DataAccessException e) {
             var errResponse = new ServerMessage(ServerMessageType.ERROR, "Error: couldn't make move");
@@ -122,6 +111,24 @@ public class WebSocketHandler {
             session.getRemote().sendString(new Gson().toJson(errResponse));
         }
         
+    }
+
+    private void handleSpecialGameStates(int gameID, GameData data, ChessGame game) throws IOException {
+        var opponentColor = game.getTeamTurn();
+        var otherPlayer = opponentColor == TeamColor.BLACK ? data.blackUsername() : data.whiteUsername();
+
+        if (game.isInCheckmate(opponentColor)) {
+            game.setOver(true);
+            connections.broadcast("", gameID, 
+                new ServerMessage(ServerMessageType.NOTIFICATION, otherPlayer + " is in checkmate"));
+        } else if (game.isInStalemate(opponentColor)) {
+            game.setOver(true);
+            connections.broadcast("", gameID, 
+                new ServerMessage(ServerMessageType.NOTIFICATION, otherPlayer + " is in stalemate"));
+        } else if (game.isInCheck(opponentColor)) {
+            connections.broadcast("", gameID, 
+                new ServerMessage(ServerMessageType.NOTIFICATION, otherPlayer + " is in check"));
+        }
     }
 
     private void leave(String name, int gameID, String color, Session session) throws IOException {
