@@ -45,7 +45,7 @@ public class ConnectionManager {
 
     public void playerJoined(int gameID, String username) {
         activePlayersByGame.computeIfAbsent(gameID, 
-            k -> ConcurrentHashMap.newKeySet()).add(username);
+            _ -> ConcurrentHashMap.newKeySet()).add(username);
     }
 
     public void playerLeft(int gameID, String username) {

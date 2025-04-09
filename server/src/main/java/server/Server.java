@@ -52,7 +52,7 @@ public class Server {
         authService = new AuthService(authDAO);
         gameService = new GameService(gameDAO);
 
-        webSocketHandler = new WebSocketHandler(userDAO, authDAO, gameDAO);
+        webSocketHandler = new WebSocketHandler(authDAO, gameDAO);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {

@@ -20,18 +20,15 @@ import chess.ChessGame.TeamColor;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
-import dataaccess.interfaces.UserDAO;
 
 @WebSocket
 public class WebSocketHandler {
 
     private final ConnectionManager connections = new ConnectionManager();
-    private UserDAO userDAO;
     private AuthDAO authDAO;
     private GameDAO gameDAO;
 
-    public WebSocketHandler(UserDAO userDAO, AuthDAO authDAO, GameDAO gameDAO) {
-        this.userDAO = userDAO;
+    public WebSocketHandler(AuthDAO authDAO, GameDAO gameDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
     }
@@ -41,7 +38,7 @@ public class WebSocketHandler {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getAuthToken(), command.getGameID(), command.getColor(), session);
-            case MAKE_MOVE -> make_move(command.getAuthToken(), command.getGameID(), command.getMove(), session);
+            case MAKE_MOVE -> makeMove(command.getAuthToken(), command.getGameID(), command.getMove(), session);
             case LEAVE -> leave(command.getAuthToken(), command.getGameID(), command.getColor(), session);
             case RESIGN -> resign(command.getAuthToken(), command.getGameID(), command.getColor(), session);
         }
@@ -67,7 +64,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void make_move(String authToken, int gameID, ChessMove move, Session session) throws IOException {
+    private void makeMove(String authToken, int gameID, ChessMove move, Session session) throws IOException {
         try {
             var name = authDAO.getUsernameFromToken(authToken);
             var data = gameDAO.getGame(gameID);

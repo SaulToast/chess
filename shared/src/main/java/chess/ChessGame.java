@@ -90,7 +90,7 @@ public class ChessGame {
     }
 
     private void addEnPassant(Collection<ChessMove> moves, ChessPiece piece) {
-        if (piece.getPieceType() != ChessPiece.PieceType.PAWN || enPassantTarget == null) return;
+        if (piece.getPieceType() != ChessPiece.PieceType.PAWN || enPassantTarget == null) { return; }
     
         var curr = piece.getMyPosition();
         int direction = piece.getTeamColor() == TeamColor.WHITE ? 1 : -1;
