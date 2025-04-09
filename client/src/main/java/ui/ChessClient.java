@@ -240,7 +240,8 @@ public class ChessClient {
         state = State.POSTLOGIN;
         var currColor = color == TeamColor.WHITE ? "white" : "black";
         ws.leaveGame(authData.authToken(), currColor, currentGame.gameID());
-        System.out.print(SET_TEXT_COLOR_BLUE + "You left the game" + RESET_TEXT_COLOR);
+        System.out.print(ERASE_SCREEN);
+        System.out.println(SET_TEXT_COLOR_BLUE + "\nYou left the game" + RESET_TEXT_COLOR);
         currentGame = null;
         return "";
     }
@@ -255,7 +256,8 @@ public class ChessClient {
         var currColor = color == TeamColor.WHITE ? "white" : "black";
         ws.resignGame(authData.authToken(), currColor, currentGame.gameID());
         state = State.POSTLOGIN;
-        System.out.print(SET_TEXT_COLOR_BLUE + "You resigned from the game" + RESET_TEXT_COLOR);
+        System.out.print(ERASE_SCREEN);
+        System.out.println(SET_TEXT_COLOR_BLUE + "\nYou resigned from the game" + RESET_TEXT_COLOR);
         currentGame = null;
         return "";
     }

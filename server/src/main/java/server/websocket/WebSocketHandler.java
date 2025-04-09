@@ -76,6 +76,10 @@ public class WebSocketHandler {
             if (game.isOver()) {
                 throw new InvalidMoveException("Game is over");
             }
+
+            if (!name.equals(data.whiteUsername()) && !name.equals(data.blackUsername())) {
+                throw new InvalidMoveException("An observer can't move");
+            }
             
             if (data.whiteUsername() == null || data.blackUsername() == null) {
                 throw new InvalidMoveException("Wait for a second player");

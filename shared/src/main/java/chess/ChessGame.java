@@ -90,11 +90,15 @@ public class ChessGame {
     }
 
     private void addEnPassant(Collection<ChessMove> moves, ChessPiece piece) {
-        if (piece.getPieceType() != ChessPiece.PieceType.PAWN) { return;}
-        if (enPassantTarget == null) { return; }
-        var currPosition = piece.getMyPosition();
-        if (enPassantWouldCapture.getMyPosition().getRow() != currPosition.getRow()) { return; }
-        moves.add(new ChessMove(currPosition, enPassantTarget));
+        if (piece.getPieceType() != ChessPiece.PieceType.PAWN || enPassantTarget == null) return;
+    
+        var curr = piece.getMyPosition();
+        int direction = piece.getTeamColor() == TeamColor.WHITE ? 1 : -1;
+    
+        if (enPassantTarget.getRow() == curr.getRow() + direction &&
+            Math.abs(enPassantTarget.getColumn() - curr.getColumn()) == 1) {
+            moves.add(new ChessMove(curr, enPassantTarget));
+        }
     }
 
     private void addCastling(Collection<ChessMove> moves, ChessPiece piece) {
@@ -181,8 +185,10 @@ public class ChessGame {
 
         if (currPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
             if (move.getEndPosition().equals(enPassantTarget)) {
-                currentBoard.removePiece(enPassantWouldCapture.getMyPosition());
-                enPassantWouldCapture = null;
+                int direction = currPiece.getTeamColor() == TeamColor.WHITE ? -1 : 1;
+                int capturedRow = move.getEndPosition().getRow() + direction;
+                int capturedCol = move.getEndPosition().getColumn();
+                currentBoard.removePiece(new ChessPosition(capturedRow, capturedCol));
             }
             enPassantLogic(move, currPiece);
         }
@@ -238,11 +244,13 @@ public class ChessGame {
         int direction = piece.getTeamColor() == TeamColor.WHITE ? 1 : -1;
         var start = move.getStartPosition();
         var end = move.getEndPosition();
-        if (end.getRow() != start.getRow() + 2*direction) {
-            return;
+        
+        // Only do anything if the pawn moved two spaces forward
+        if (end.getRow() == start.getRow() + 2 * direction) {
+            enPassantTarget = new ChessPosition(start.getRow() + direction, start.getColumn());
+        } else {
+            enPassantTarget = null;
         }
-        enPassantTarget = new ChessPosition(end.getRow() - direction, end.getColumn());
-        enPassantWouldCapture = piece;
     }
 
     /**
