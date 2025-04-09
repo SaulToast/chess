@@ -67,13 +67,21 @@ public class WebSocketHandler {
         }
     }
 
-    private void make_move(String name, int gameID, ChessMove move, Session session) throws IOException {
+    private void make_move(String authToken, int gameID, ChessMove move, Session session) throws IOException {
         try {
+            var name = authDAO.getUsernameFromToken(authToken);
             var data = gameDAO.getGame(gameID);
             if (data.whiteUsername() == null || data.blackUsername() == null) {
                 throw new InvalidMoveException("Wait for a second player");
             }
             var game = data.game();
+            var color = name == data.whiteUsername() ? TeamColor.WHITE : TeamColor.BLACK;
+            var otherTeam = game.getTeamTurn();
+
+            if (!color.equals(otherTeam)) {
+                throw new InvalidMoveException("Not your turn");
+            }
+
             game.makeMove(move);
             var newData = new GameData(gameID, data.whiteUsername(), data.blackUsername(), data.gameName(), game);
             gameDAO.updateGame(gameID, newData);
@@ -85,7 +93,6 @@ public class WebSocketHandler {
             var notification = new ServerMessage(ServerMessageType.NOTIFICATION, message);
             connections.broadcast(name, gameID, notification);
 
-            var otherTeam = game.getTeamTurn();
             var otherPlayer = otherTeam == TeamColor.BLACK ? data.blackUsername() : data.whiteUsername();
             message = "";
             var specialState = false;

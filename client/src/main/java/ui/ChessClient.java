@@ -206,7 +206,7 @@ public class ChessClient {
         var start = parsePosition(params[0]);
         var end = parsePosition(params[1]);
         var move = new ChessMove(start, end);
-        ws.makeMove(authData.username(), currentGame.gameID(), move);
+        ws.makeMove(authData.authToken(), currentGame.gameID(), move);
         return "";
     }
 
