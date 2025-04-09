@@ -53,7 +53,7 @@ public class WebSocketHandler {
             connections.add(name, session, gameID);
             connections.playerJoined(gameID, name);
             var game = gameDAO.getGame(gameID);
-            var response = new ServerMessage(ServerMessageType.LOAD_GAME, game.game());
+            var response = new ServerMessage(ServerMessageType.LOAD_GAME, game);
             String jsonResponse = new Gson().toJson(response);
             session.getRemote().sendString(jsonResponse);
 
@@ -90,8 +90,14 @@ public class WebSocketHandler {
             }
 
             game.makeMove(move);
+            var updatedData = new GameData(
+                data.gameID(), 
+                data.whiteUsername(),
+                data.blackUsername(), 
+                data.gameName(), 
+                game);
 
-            var response = new ServerMessage(ServerMessageType.LOAD_GAME, game);
+            var response = new ServerMessage(ServerMessageType.LOAD_GAME, updatedData);
             connections.broadcast("", gameID, response);
 
             var message = String.format("%s made move %s", name, move);
@@ -148,8 +154,16 @@ public class WebSocketHandler {
 
     private void resign(String authToken, int gameID, String color, Session session) throws IOException {
         try {
+            var name = authDAO.getUsernameFromToken(authToken);
             var data = gameDAO.getGame(gameID);
             var game = data.game();
+            var whiteName = data.whiteUsername();
+            var blackName = data.blackUsername();
+            if (!name.equals(whiteName) && !name.equals(blackName)) {
+                var errResponse = new ServerMessage(ServerMessageType.ERROR, "Observer can't resign");
+                session.getRemote().sendString(new Gson().toJson(errResponse));
+                return;
+            }
             game.setOver(true);
             var updatedData = new GameData(
                 data.gameID(), 
@@ -159,7 +173,6 @@ public class WebSocketHandler {
                 game);
                 gameDAO.updateGame(gameID, updatedData);
                 
-            var name = authDAO.getUsernameFromToken(authToken);
             var message = String.format("%s resigned from the game", name);
             var notification = new ServerMessage(ServerMessageType.NOTIFICATION, message);
             connections.broadcast("", gameID, notification);

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import chess.ChessGame.TeamColor;
@@ -183,14 +182,15 @@ public class ChessClient {
         return "";
     }
 
-    public void drawGame(ChessGame game) {
+    public void drawGame(GameData game) {
+        
         currentGame = new GameData(
             currentGame.gameID(), 
-            currentGame.whiteUsername(), 
-            currentGame.blackUsername(), 
+            game.whiteUsername(), 
+            game.blackUsername(), 
             currentGame.gameName(), 
-            game);
-        var drawer = new ChessBoardDrawer(color, game);
+            game.game());
+        var drawer = new ChessBoardDrawer(color, game.game());
         drawer.drawBoard();
         inGame.printPrompt();
     }
@@ -239,6 +239,12 @@ public class ChessClient {
     }
 
     public String resignGame() throws ResponseException {
+        var name = authData.username();
+
+        if (!name.equals(currentGame.whiteUsername()) && !name.equals(currentGame.blackUsername())) {
+            throw new ResponseException(500, "Only players can resign");
+        }
+
         var currColor = color == TeamColor.WHITE ? "white" : "black";
         ws.resignGame(authData.authToken(), currColor, currentGame.gameID());
         state = State.POSTLOGIN;

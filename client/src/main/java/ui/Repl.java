@@ -3,7 +3,6 @@ package ui;
 import java.util.Scanner;
 
 import facade.NotificationHandler;
-import websocket.messages.ServerMessage;
 
 import static ui.EscapeSequences.*;
 

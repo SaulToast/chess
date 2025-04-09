@@ -44,7 +44,7 @@ public class WebSocketFacade extends Endpoint {
                             notificationHandler.notify(notification);
                             break;
                         case LOAD_GAME:
-                            client.drawGame(response.getGame());
+                            client.drawGame(response.getGameData());
                             break;
                         case ERROR:
                             var errorMessage = response.getErrMessage();

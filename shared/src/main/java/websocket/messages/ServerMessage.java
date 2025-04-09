@@ -3,6 +3,7 @@ package websocket.messages;
 import java.util.Objects;
 
 import chess.ChessGame;
+import model.GameData;
 
 /**
  * Represents a Message the server can send through a WebSocket
@@ -13,7 +14,7 @@ import chess.ChessGame;
 public class ServerMessage {
     ServerMessageType serverMessageType;
     String message;
-    ChessGame game;
+    GameData game;
     String errorMessage;
 
     public enum ServerMessageType {
@@ -35,7 +36,7 @@ public class ServerMessage {
         }
     }
 
-    public ServerMessage(ServerMessageType type, ChessGame game) {
+    public ServerMessage(ServerMessageType type, GameData game) {
         this.serverMessageType = type;
         this.game = game;
     }
@@ -44,7 +45,7 @@ public class ServerMessage {
         return this.serverMessageType;
     }
 
-    public ChessGame getGame() {
+    public GameData getGameData() {
         return game;
     }
 
