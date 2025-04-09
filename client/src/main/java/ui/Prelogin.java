@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import exceptions.ResponseException;
-import websocket.messages.ServerMessage;
 
 import static ui.EscapeSequences.*;
 

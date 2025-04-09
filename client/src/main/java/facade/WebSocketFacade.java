@@ -40,13 +40,15 @@ public class WebSocketFacade extends Endpoint {
             
                     switch (type) {
                         case NOTIFICATION:
-                            notificationHandler.notify(response);
+                            var notification = response.getMessage();
+                            notificationHandler.notify(notification);
                             break;
                         case LOAD_GAME:
                             client.drawGame(response.getGame());
                             break;
                         case ERROR:
-                            notificationHandler.notify(response);
+                            var errorMessage = response.getErrMessage();
+                            notificationHandler.notify(errorMessage);
                             break;
                     }
                 }
@@ -82,6 +84,16 @@ public class WebSocketFacade extends Endpoint {
     public void leaveGame(String authToken, String color, int gameID) throws ResponseException {
         try {
             var command = new UserGameCommand(CommandType.LEAVE, authToken, gameID, color);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+            this.session.close();
+        } catch (IOException ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
+
+    public void resignGame(String authToken, String color, int gameID) throws ResponseException {
+        try {
+            var command = new UserGameCommand(CommandType.RESIGN, authToken, gameID, color);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
             this.session.close();
         } catch (IOException ex) {

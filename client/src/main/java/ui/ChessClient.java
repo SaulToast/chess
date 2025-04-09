@@ -171,8 +171,10 @@ public class ChessClient {
         }
         GameData game = getGame(params);
         color = TeamColor.WHITE;
+        currentGame = game;
         ws = new WebSocketFacade(serverUrl, notificationHandler, this);
-        ws.joinGame(authData.username(), "an observer", game.gameID());
+        ws.joinGame(authData.authToken(), "an observer", game.gameID());
+        state = State.INGAME;
         return "";
     }
 
@@ -230,14 +232,19 @@ public class ChessClient {
     public String leaveGame() throws ResponseException {
         state = State.POSTLOGIN;
         var currColor = color == TeamColor.WHITE ? "white" : "black";
-        ws.leaveGame(authData.username(), currColor, currentGame.gameID());
+        ws.leaveGame(authData.authToken(), currColor, currentGame.gameID());
         System.out.print(SET_TEXT_COLOR_BLUE + "You left the game" + RESET_TEXT_COLOR);
+        currentGame = null;
         return "";
     }
 
     public String resignGame() throws ResponseException {
-        // TODO
-        throw new UnsupportedOperationException();
+        var currColor = color == TeamColor.WHITE ? "white" : "black";
+        ws.resignGame(authData.authToken(), currColor, currentGame.gameID());
+        state = State.POSTLOGIN;
+        System.out.print(SET_TEXT_COLOR_BLUE + "You resigned from the game" + RESET_TEXT_COLOR);
+        currentGame = null;
+        return "";
     }
 
 

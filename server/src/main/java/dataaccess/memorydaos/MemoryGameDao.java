@@ -26,6 +26,15 @@ public class MemoryGameDao implements GameDAO{
     }
 
     @Override
+    public void deleteGame(int gameID) throws DataAccessException {
+        if (games.containsKey(gameID)) {
+            games.remove(gameID);
+            return;
+        }
+        throw new DataAccessException("No game with the given ID");
+    }
+
+    @Override
     public void createGame(GameData g) throws DataAccessException {
         if (!games.containsKey(g.gameID())){
             games.put(g.gameID(), g);

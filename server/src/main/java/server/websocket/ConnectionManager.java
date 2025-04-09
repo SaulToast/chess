@@ -8,10 +8,13 @@ import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
     public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+    Map<Integer, Set<String>> activePlayersByGame = new ConcurrentHashMap<>();
 
     public void add(String visitorName, Session session, int gameID) {
         var connection = new Connection(visitorName, session, gameID);
@@ -38,5 +41,24 @@ public class ConnectionManager {
         for (var c : removeList) {
             connections.remove(c.visitorName);
         }
+    }
+
+    public void playerJoined(int gameID, String username) {
+        activePlayersByGame.computeIfAbsent(gameID, 
+            k -> ConcurrentHashMap.newKeySet()).add(username);
+    }
+
+    public void playerLeft(int gameID, String username) {
+        var players = activePlayersByGame.get(gameID);
+        if (players != null) {
+            players.remove(username);
+            if (players.isEmpty()) {
+                activePlayersByGame.remove(gameID);
+            }
+        }
+    }
+
+    public boolean hasActivePlayers(int gameID) {
+        return activePlayersByGame.containsKey(gameID);
     }
 }

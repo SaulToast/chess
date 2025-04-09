@@ -1,6 +1,5 @@
 package server.websocket;
 
-import exceptions.ResponseException;
 import model.GameData;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
@@ -44,7 +43,7 @@ public class WebSocketHandler {
             case CONNECT -> connect(command.getAuthToken(), command.getGameID(), command.getColor(), session);
             case MAKE_MOVE -> make_move(command.getAuthToken(), command.getGameID(), command.getMove(), session);
             case LEAVE -> leave(command.getAuthToken(), command.getGameID(), command.getColor(), session);
-            case RESIGN -> resign(command.getGameID());
+            case RESIGN -> resign(command.getAuthToken(), command.getGameID(), command.getColor(), session);
         }
     }
 
@@ -52,6 +51,7 @@ public class WebSocketHandler {
         try {
             var name = authDAO.getUsernameFromToken(authToken);
             connections.add(name, session, gameID);
+            connections.playerJoined(gameID, name);
             var game = gameDAO.getGame(gameID);
             var response = new ServerMessage(ServerMessageType.LOAD_GAME, game.game());
             String jsonResponse = new Gson().toJson(response);
@@ -71,16 +71,16 @@ public class WebSocketHandler {
         try {
             var name = authDAO.getUsernameFromToken(authToken);
             var data = gameDAO.getGame(gameID);
+            var game = data.game();
 
+            if (game.isOver()) {
+                throw new InvalidMoveException("Game is over");
+            }
+            
             if (data.whiteUsername() == null || data.blackUsername() == null) {
                 throw new InvalidMoveException("Wait for a second player");
             }
 
-            var game = data.game();
-
-            if (game.isOver()) {
-                throw new InvalidMoveException("Game is already over");
-            }
 
             var color = name.equals(data.whiteUsername()) ? TeamColor.WHITE : TeamColor.BLACK;
 
@@ -131,33 +131,66 @@ public class WebSocketHandler {
         }
     }
 
-    private void leave(String name, int gameID, String color, Session session) throws IOException {
+    private void leave(String authToken, int gameID, String color, Session session) throws IOException {
         try {
-            removePlayer(gameID, color);
+            var name = authDAO.getUsernameFromToken(authToken);
             var message = String.format("%s left the game", name);
             var notification = new ServerMessage(ServerMessageType.NOTIFICATION, message);
             connections.broadcast(name, gameID, notification);
+            connections.playerLeft(gameID, name);
+            removePlayer(gameID, name);
         } catch (Exception e) {
             var errResponse = new ServerMessage(ServerMessageType.ERROR, "Error: couldn't leave game");
             session.getRemote().sendString(new Gson().toJson(errResponse));
         }
-
     }
 
-    private void removePlayer(int gameID, String color) throws DataAccessException {
-        var game = gameDAO.getGame(gameID);
-        String blackUsername;
-        String whiteUsername;
-        if (color.equals("white")) {
-            blackUsername = game.blackUsername();
-            whiteUsername = null;
-        } else {
-            blackUsername = null;
-            whiteUsername = game.whiteUsername();
+
+    private void resign(String authToken, int gameID, String color, Session session) throws IOException {
+        try {
+            var data = gameDAO.getGame(gameID);
+            var game = data.game();
+            game.setOver(true);
+            var updatedData = new GameData(
+                data.gameID(), 
+                data.whiteUsername(), 
+                data.blackUsername(), 
+                data.gameName(), 
+                game);
+                gameDAO.updateGame(gameID, updatedData);
+                
+            var name = authDAO.getUsernameFromToken(authToken);
+            var message = String.format("%s resigned from the game", name);
+            var notification = new ServerMessage(ServerMessageType.NOTIFICATION, message);
+            connections.broadcast("", gameID, notification);
+            connections.playerLeft(gameID, name);
+            removePlayer(gameID, name);
+
+        } catch (DataAccessException e) {
+            var errResponse = new ServerMessage(ServerMessageType.ERROR, "Error: couldn't resign");
+            session.getRemote().sendString(new Gson().toJson(errResponse));
         }
-        var newGame = new GameData(game.gameID(), whiteUsername, blackUsername, game.gameName(), game.game());
-        gameDAO.updateGame(gameID, newGame);
     }
 
-    private void resign(int gameID) {}
+    private void removePlayer(int gameID, String name) throws DataAccessException {
+        var data = gameDAO.getGame(gameID);
+        var game = data.game();
+        String blackUsername = data.blackUsername();
+        String whiteUsername = data.whiteUsername();
+
+        if (name.equals(whiteUsername)) {
+            whiteUsername = null;
+        } else if (name.equals(blackUsername)){
+            blackUsername = null;
+        }
+
+
+        if (game.isOver() && !connections.hasActivePlayers(gameID)) {
+            gameDAO.deleteGame(gameID);
+
+        } else {
+            var newGame = new GameData(data.gameID(), whiteUsername, blackUsername, data.gameName(), data.game());
+            gameDAO.updateGame(gameID, newGame);
+        }
+    }
 }

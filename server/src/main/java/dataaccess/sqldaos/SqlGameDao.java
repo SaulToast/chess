@@ -41,6 +41,16 @@ public class SqlGameDao implements GameDAO {
         }
     }
 
+    public void deleteGame(int gameID) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var stmt = conn.prepareStatement("DELETE FROM gameData WHERE gameID = ?");
+            stmt.setInt(1, gameID);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Error deleting game from DB");
+        }
+    }
+
     @Override
     public void createGame(GameData g) throws DataAccessException {
         String insertStatement = "INSERT INTO gameData (gameID, gameName, whiteUsername, blackUsername, gameJson) VALUES (?, ?, ?, ?, ?)";
