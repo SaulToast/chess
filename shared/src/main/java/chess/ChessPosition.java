@@ -53,6 +53,8 @@ public class ChessPosition {
 
     @Override
     public String toString() {
-        return String.format("(%d, %d)", row, col);
+        char file = (char) ('a' + col - 1);
+        int rank = row;
+        return "" + file + rank;
     }
 }

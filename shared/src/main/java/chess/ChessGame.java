@@ -166,9 +166,9 @@ public class ChessGame {
         enPassantResetCounter++;
         var currPiece = currentBoard.getPiece(move.getStartPosition());
         if (currPiece == null) { throw new InvalidMoveException(); }
-        if (!validMoves(move.getStartPosition()).contains(move)) { throw new InvalidMoveException(); }
+        if (!validMoves(move.getStartPosition()).contains(move)) { throw new InvalidMoveException("Invalid move"); }
 
-        if (currPiece.getTeamColor() != getTeamTurn()) { throw new InvalidMoveException(); }
+        if (currPiece.getTeamColor() != getTeamTurn()) { throw new InvalidMoveException("Not your turn"); }
 
         if (currPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
             if (move.getEndPosition().equals(enPassantTarget)) {
