@@ -48,8 +48,9 @@ public class WebSocketHandler {
         }
     }
 
-    private void connect(String name, int gameID, String color, Session session) throws IOException {
+    private void connect(String authToken, int gameID, String color, Session session) throws IOException {
         try {
+            var name = authDAO.getUsernameFromToken(authToken);
             connections.add(name, session, gameID);
             var game = gameDAO.getGame(gameID);
             var response = new ServerMessage(ServerMessageType.LOAD_GAME, game.game());
@@ -60,8 +61,8 @@ public class WebSocketHandler {
             var notification = new ServerMessage(ServerMessageType.NOTIFICATION, message);
             connections.broadcast(name, gameID, notification);
 
-        } catch (Exception e) {
-            var errResponse = new ServerMessage(ServerMessageType.ERROR, "Error: couldn't connect to game");
+        } catch (DataAccessException e) {
+            var errResponse = new ServerMessage(ServerMessageType.ERROR, e.getMessage());
             session.getRemote().sendString(new Gson().toJson(errResponse));
         }
     }

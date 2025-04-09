@@ -25,6 +25,7 @@ public class InGame extends Repl {
                 case "move" -> client.makeMove(params);
                 case "leave" -> client.leaveGame();
                 case "resign" -> client.resignGame();
+                case "redraw" -> client.redrawGame();
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -40,8 +41,15 @@ public class InGame extends Repl {
 
     @Override
     public String help() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'help'");
+        return """
+        
+                - leave: leaves the current game, doesn't lose the game
+                - resign: resigns the current game, acts as a loss
+                - redraw: redraws the chess board
+                - move <start> <end>: in the format of e2 e4
+                - show <position>: shows all the valid moves for a position
+                - help: gives list of commands
+                """;
     }
 
 }

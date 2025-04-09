@@ -14,6 +14,7 @@ public class ServerMessage {
     ServerMessageType serverMessageType;
     String message;
     ChessGame game;
+    String errorMessage;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -27,7 +28,11 @@ public class ServerMessage {
 
     public ServerMessage(ServerMessageType type, String message) {
         this.serverMessageType = type;
-        this.message = message;
+        if (type.equals(ServerMessageType.ERROR)) {
+            this.errorMessage = message;
+        } else {
+            this.message = message;
+        }
     }
 
     public ServerMessage(ServerMessageType type, ChessGame game) {

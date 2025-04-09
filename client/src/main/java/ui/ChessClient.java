@@ -145,7 +145,7 @@ public class ChessClient {
         currentGame = game;
         color = team.equals("WHITE") ? TeamColor.WHITE  : TeamColor.BLACK;
         ws = new WebSocketFacade(serverUrl, notificationHandler, this);
-        ws.joinGame(authData.username(), params[1].toLowerCase(), id);
+        ws.joinGame(authData.authToken(), params[1].toLowerCase(), id);
         state = State.INGAME;
         return "";
     }
@@ -182,9 +182,21 @@ public class ChessClient {
     }
 
     public void drawGame(ChessGame game) {
+        currentGame = new GameData(
+            currentGame.gameID(), 
+            currentGame.whiteUsername(), 
+            currentGame.blackUsername(), 
+            currentGame.gameName(), 
+            game);
         var drawer = new ChessBoardDrawer(color, game);
         drawer.drawBoard();
         inGame.printPrompt();
+    }
+
+    public String redrawGame() {
+        var drawer = new ChessBoardDrawer(color, currentGame.game());
+        drawer.drawBoard();
+        return "";
     }
 
     public String makeMove(String... params) throws ResponseException {
