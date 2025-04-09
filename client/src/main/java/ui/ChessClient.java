@@ -3,6 +3,7 @@ package ui;
 import static ui.EscapeSequences.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -201,6 +202,12 @@ public class ChessClient {
         return "";
     }
 
+    public void drawGameWithHighlights(Collection<ChessMove> moves) {
+        var drawer = new ChessBoardDrawer(color, currentGame.game());
+        drawer.setHighlightedMoves(moves);
+        drawer.drawBoard();
+    }
+
     public String makeMove(String... params) throws ResponseException {
         if (params.length != 2) {
             throw new ResponseException(500, "Invalid move format. Expected <start> <end> like e2 e4");
@@ -250,6 +257,17 @@ public class ChessClient {
         state = State.POSTLOGIN;
         System.out.print(SET_TEXT_COLOR_BLUE + "You resigned from the game" + RESET_TEXT_COLOR);
         currentGame = null;
+        return "";
+    }
+
+    public String showValidMoves(String... params) throws ResponseException {
+        if (params.length != 1) {
+            throw new ResponseException(500, "Expected <start> in the format of e2");
+        }
+        var start = parsePosition(params[0]);
+        var game = currentGame.game();
+        var moves = game.validMoves(start);
+        drawGameWithHighlights(moves);
         return "";
     }
 

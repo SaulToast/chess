@@ -25,6 +25,7 @@ public class InGame extends Repl {
                 case "leave" -> client.leaveGame();
                 case "resign" -> client.resignGame();
                 case "redraw" -> client.redrawGame();
+                case "show" -> client.showValidMoves(params);
                 default -> help();
             };
         } catch (ResponseException ex) {

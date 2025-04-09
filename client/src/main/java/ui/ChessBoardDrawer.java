@@ -4,13 +4,16 @@ import static ui.EscapeSequences.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPosition;
 import chess.ChessGame.TeamColor;
+import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPiece.PieceType;
 
@@ -23,6 +26,7 @@ public class ChessBoardDrawer {
     private final String[] yLables = {"1", "2", "3", "4", "5", "6", "7", "8"};
     private final String[] xLabels = {"a", "b", "c", "d", "e", "f", "g", "h"};
     private ChessBoard board;
+    private Collection<ChessMove> highlightedMoves = Set.of();
 
     private static final Map<TeamColor, Map<PieceType, String>> SYMBOL_MAP = new HashMap<>();
 
@@ -50,6 +54,10 @@ public class ChessBoardDrawer {
         out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         perspective = color;
         this.board = game.getBoard();
+    }
+
+    public void setHighlightedMoves(Collection<ChessMove> moves) {
+        this.highlightedMoves = moves;
     }
 
     public void drawBoard() {
@@ -102,10 +110,15 @@ public class ChessBoardDrawer {
                 }
 
                 int boardCol = (perspective == TeamColor.WHITE) ? j : 9 - j;
+                var pos = new ChessPosition(boardRow, boardCol);
+                var piece = board.getPiece(pos);
 
-                var piece = board.getPiece(new ChessPosition(boardRow, boardCol));
-
-                if ((i % 2 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 2 == 0)) {
+                boolean isHighlighted = highlightedMoves.stream()
+                    .anyMatch(move -> move.getEndPosition().equals(pos));
+                
+                if (isHighlighted) {
+                    out.print(SET_BG_COLOR_GREEN);
+                } else if ((i % 2 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 2 == 0)) {
                     out.print(SET_BG_COLOR_WHITE);
                     out.print(SET_TEXT_COLOR_WHITE);
                 } else {
