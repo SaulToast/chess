@@ -144,6 +144,7 @@ public class WebSocketHandler {
             var notification = new ServerMessage(ServerMessageType.NOTIFICATION, message);
             connections.broadcast(name, gameID, notification);
             connections.playerLeft(gameID, name);
+            connections.remove(name);
             removePlayer(gameID, name);
         } catch (Exception e) {
             var errResponse = new ServerMessage(ServerMessageType.ERROR, "Error: couldn't leave game");
@@ -159,11 +160,19 @@ public class WebSocketHandler {
             var game = data.game();
             var whiteName = data.whiteUsername();
             var blackName = data.blackUsername();
+
             if (!name.equals(whiteName) && !name.equals(blackName)) {
                 var errResponse = new ServerMessage(ServerMessageType.ERROR, "Observer can't resign");
                 session.getRemote().sendString(new Gson().toJson(errResponse));
                 return;
             }
+
+            if (game.isOver()) {
+                var errResponse = new ServerMessage(ServerMessageType.ERROR, "Game is already over. Can't resign");
+                session.getRemote().sendString(new Gson().toJson(errResponse));
+                return;
+            }
+
             game.setOver(true);
             var updatedData = new GameData(
                 data.gameID(), 
