@@ -98,6 +98,8 @@ public class WebSocketHandler {
                 data.gameName(), 
                 game);
 
+            var stateMessage = handleSpecialGameStates(gameID, data, game);
+
             var response = new ServerMessage(ServerMessageType.LOAD_GAME, updatedData);
             connections.broadcast("", gameID, response);
 
@@ -105,7 +107,11 @@ public class WebSocketHandler {
             var notification = new ServerMessage(ServerMessageType.NOTIFICATION, message);
             connections.broadcast(name, gameID, notification);
 
-            handleSpecialGameStates(gameID, data, game);
+            if (!stateMessage.equals("")) {
+                connections.broadcast("", gameID, 
+                new ServerMessage(ServerMessageType.NOTIFICATION, stateMessage));
+            }
+
 
             var newData = new GameData(gameID, data.whiteUsername(), data.blackUsername(), data.gameName(), game);
             gameDAO.updateGame(gameID, newData);
@@ -120,22 +126,20 @@ public class WebSocketHandler {
         
     }
 
-    private void handleSpecialGameStates(int gameID, GameData data, ChessGame game) throws IOException {
+    private String handleSpecialGameStates(int gameID, GameData data, ChessGame game) throws IOException {
         var opponentColor = game.getTeamTurn();
         var otherPlayer = opponentColor == TeamColor.BLACK ? data.blackUsername() : data.whiteUsername();
-
+        String message = "";
         if (game.isInCheckmate(opponentColor)) {
             game.setOver(true);
-            connections.broadcast("", gameID, 
-                new ServerMessage(ServerMessageType.NOTIFICATION, otherPlayer + " is in checkmate"));
+            message = otherPlayer + " is in checkmate";
         } else if (game.isInStalemate(opponentColor)) {
             game.setOver(true);
-            connections.broadcast("", gameID, 
-                new ServerMessage(ServerMessageType.NOTIFICATION, otherPlayer + " is in stalemate"));
+            message = otherPlayer + " is in stalemate";
         } else if (game.isInCheck(opponentColor)) {
-            connections.broadcast("", gameID, 
-                new ServerMessage(ServerMessageType.NOTIFICATION, otherPlayer + " is in check"));
+            message = otherPlayer + " is in check";
         }
+        return message;
     }
 
     private void leave(String authToken, int gameID, String color, Session session) throws IOException {

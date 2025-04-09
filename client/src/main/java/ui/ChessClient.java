@@ -253,6 +253,10 @@ public class ChessClient {
             throw new ResponseException(500, "Only players can resign");
         }
 
+        if (currentGame.game().isOver()) {
+            throw new ResponseException(500, "Game is already over, try leave instead");
+        }
+
         var currColor = color == TeamColor.WHITE ? "white" : "black";
         ws.resignGame(authData.authToken(), currColor, currentGame.gameID());
         state = State.POSTLOGIN;
