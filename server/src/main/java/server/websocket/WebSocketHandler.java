@@ -190,8 +190,6 @@ public class WebSocketHandler {
             var message = String.format("%s resigned from the game", name);
             var notification = new ServerMessage(ServerMessageType.NOTIFICATION, message);
             connections.broadcast("", gameID, notification);
-            connections.playerLeft(gameID, name);
-            removePlayer(gameID, name);
 
         } catch (DataAccessException e) {
             var errResponse = new ServerMessage(ServerMessageType.ERROR, "Error: couldn't resign");

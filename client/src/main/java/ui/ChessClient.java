@@ -257,12 +257,17 @@ public class ChessClient {
             throw new ResponseException(500, "Game is already over, try leave instead");
         }
 
+        System.out.print(SET_TEXT_COLOR_BLUE + "Are you sure you want to resign? (yes/no): " + RESET_TEXT_COLOR);
+        String response = scanner.next().trim().toLowerCase();
+    
+        if (!response.equals("yes")) {
+            System.out.println(SET_TEXT_COLOR_BLUE + "\nResignation cancelled." + RESET_TEXT_COLOR);
+            return "";
+        }
+
         var currColor = color == TeamColor.WHITE ? "white" : "black";
         ws.resignGame(authData.authToken(), currColor, currentGame.gameID());
-        state = State.POSTLOGIN;
-        System.out.print(ERASE_SCREEN);
         System.out.println(SET_TEXT_COLOR_BLUE + "\nYou resigned from the game" + RESET_TEXT_COLOR);
-        currentGame = null;
         return "";
     }
 
